@@ -36,7 +36,8 @@ class NextEpDialog(pyxbmct.AddonDialogWindow):
         pass
 
     def setAnimation(self, control):
-        pass
+        control.setAnimations([('WindowOpen', 'effect=fade start=0 end=100 time=250'),
+                               ('WindowClose', 'effect=fade start=100 end=0 time=250')])
 
 
 class LoginDialog(NextEpDialog):
@@ -52,14 +53,14 @@ class MainDialog(NextEpDialog):
     """
     def _set_controls(self):
         self._sync_new_btn = pyxbmct.Button('Synchronize new video items')
-        self.placeControl(self._sync_new_btn, 1, 0, columnspan=2)
+        self.placeControl(self._sync_new_btn, 0, 0, columnspan=2)
         self._sync_library_btn = pyxbmct.Button('Synchronize Kodi video library')
-        self.placeControl(self._sync_library_btn, 0, 0, columnspan=2)
+        self.placeControl(self._sync_library_btn, 1, 0, columnspan=2)
         self._enter_login_btn = pyxbmct.Button('Enter login and password')
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
 
     def _set_connections(self):
-        pass
+        self.connect(pyxbmct.ACTION_NAV_BACK, self.close)
 
     def _set_navigation(self):
         self._sync_new_btn.controlUp(self._enter_login_btn)
