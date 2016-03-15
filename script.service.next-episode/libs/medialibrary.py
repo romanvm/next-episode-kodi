@@ -2,11 +2,7 @@
 # Created on: 15.03.2016
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
-import sys
-if sys.version_info[1] >= 7:
-    import json
-else:
-    import simplejson as json
+import json
 import xbmc
 
 
