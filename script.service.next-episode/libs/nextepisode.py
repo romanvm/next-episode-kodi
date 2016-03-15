@@ -5,7 +5,7 @@
 import json
 import requests
 
-API = 'http://next-episode.net/api/kodi/v1/update_data'
+API = 'https://next-episode.net/api/kodi/v1/update_data'
 
 
 def send_data(data):
