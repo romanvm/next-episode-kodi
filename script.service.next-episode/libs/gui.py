@@ -60,6 +60,9 @@ class MainDialog(NextEpDialog):
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
 
     def _set_connections(self):
+        self.connect(self._sync_new_btn, self._sync_new_items)
+        self.connect(self._sync_library_btn, self._sync_library)
+        self.connect(self._enter_login_btn, self._enter_login)
         self.connect(pyxbmct.ACTION_NAV_BACK, self.close)
 
     def _set_navigation(self):
@@ -71,10 +74,10 @@ class MainDialog(NextEpDialog):
         self._enter_login_btn.controlDown(self._sync_new_btn)
         self.setFocus(self._sync_new_btn)
 
-    def _sync_library(self):
+    def _sync_new_items(self):
         pass
 
-    def _sync_new_items(self):
+    def _sync_library(self):
         pass
 
     def _enter_login(self):
