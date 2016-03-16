@@ -125,12 +125,13 @@ class MainDialog(NextEpDialog):
         self.setFocus(self._sync_new_btn)
 
     def _sync_new_items(self):
-        pass
+        raise NotImplementedError
 
     def _sync_library(self):
-        pass
+        raise NotImplementedError
 
     def _enter_login(self):
         login_dialog = LoginDialog('Login to next-episode.net', parent=self, login=addon.getSetting('login'))
         login_dialog.doModal()
         del login_dialog
+        raise NotImplementedError
