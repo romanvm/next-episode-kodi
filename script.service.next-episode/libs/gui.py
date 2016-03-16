@@ -3,8 +3,11 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 from abc import ABCMeta, abstractmethod
+import xbmc
 from xbmcaddon import Addon
+from xbmcgui import Dialog
 import pyxbmct
+from nextepisode import get_password_hash, prepare_movies_list, prepare_episodes_list, update_data
 
 addon = Addon()
 ui = addon.getLocalizedString
@@ -44,20 +47,21 @@ class LoginDialog(NextEpDialog):
     """
     Enter login/password dialog
     """
-    def __init__(self, title='', parent=None, login=''):
+    def __init__(self, title='', parent=None, username=''):
         super(LoginDialog, self).__init__(title)
         self._parent = parent
-        self.login = login
-        self._login_field.setText(login)
+        self.username = username
+        self._username_field.setText(username)
         self.password = ''
+        self.is_cancelled = True
 
     def _set_controls(self):
-        login_label = pyxbmct.Label('Login:')
+        login_label = pyxbmct.Label('Username:')
         self.placeControl(login_label, 0, 0)
         password_label = pyxbmct.Label('Password:')
         self.placeControl(password_label, 1, 0)
-        self._login_field = pyxbmct.Edit('')
-        self.placeControl(self._login_field, 0, 1)
+        self._username_field = pyxbmct.Edit('')
+        self.placeControl(self._username_field, 0, 1)
         self._password_field = pyxbmct.Edit('', isPassword=True)
         self.placeControl(self._password_field, 1, 1)
         self._ok_btn = pyxbmct.Button('OK')
@@ -68,31 +72,30 @@ class LoginDialog(NextEpDialog):
     def _set_connections(self):
         super(LoginDialog, self)._set_connections()
         self.connect(self._ok_btn, self._ok)
-        self.connect(self._cancel_btn, self._cancel)
+        self.connect(self._cancel_btn, self.close)
 
     def _set_navigation(self):
-        self._login_field.controlUp(self._ok_btn)
-        self._login_field.controlDown(self._password_field)
-        self._password_field.controlUp(self._login_field)
+        self._username_field.controlUp(self._ok_btn)
+        self._username_field.controlDown(self._password_field)
+        self._password_field.controlUp(self._username_field)
         self._password_field.controlDown(self._ok_btn)
-        self._ok_btn.setNavigation(self._password_field, self._login_field, self._cancel_btn, self._cancel_btn)
-        self._cancel_btn.setNavigation(self._password_field, self._login_field, self._ok_btn, self._ok_btn)
-        self.setFocus(self._login_field)
+        self._ok_btn.setNavigation(self._password_field, self._username_field, self._cancel_btn, self._cancel_btn)
+        self._cancel_btn.setNavigation(self._password_field, self._username_field, self._ok_btn, self._ok_btn)
+        self.setFocus(self._username_field)
 
     def doModal(self):
         self._parent.close()
         super(LoginDialog, self).doModal()
 
     def _ok(self):
-        self.login = self._login_field.getText()
+        self.is_cancelled = False
+        self.username = self._username_field.getText()
         self.password = self._password_field.getText()
         self.close()
 
-    def _cancel(self):
-        self.login = self.password = ''
-        self.close()
-
     def close(self):
+        if self.is_cancelled:
+            self.username = self.password = ''
         super(LoginDialog, self).close()
         self._parent.doModal()
 
@@ -106,8 +109,11 @@ class MainDialog(NextEpDialog):
         self.placeControl(self._sync_new_btn, 0, 0, columnspan=2)
         self._sync_library_btn = pyxbmct.Button('Synchronize Kodi video library')
         self.placeControl(self._sync_library_btn, 1, 0, columnspan=2)
-        self._enter_login_btn = pyxbmct.Button('Enter login and password')
+        self._enter_login_btn = pyxbmct.Button('Enter username and password')
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
+        if not addon.getSetting('hash'):
+            Dialog().ok('Login required!', 'Select "Enter login and password" menu item',
+                        'and enter credentials for next-episode.net.')
 
     def _set_connections(self):
         super(MainDialog, self)._set_connections()
@@ -128,10 +134,26 @@ class MainDialog(NextEpDialog):
         raise NotImplementedError
 
     def _sync_library(self):
-        raise NotImplementedError
+        if Dialog().yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
+            username = addon.getSetting('username')
+            hash_ = addon.getSetting('hash')
+            movies = prepare_movies_list()
+            episodes = prepare_episodes_list()
+            data = {
+                'user': {'username': username, 'hash': hash_},
+                'movies': movies,
+                'tvshows': episodes
+            }
+            reply = update_data(data)
+            xbmc.log('next-episode reply:\n{}'.format(reply), xbmc.LOGNOTICE)
 
     def _enter_login(self):
-        login_dialog = LoginDialog('Login to next-episode.net', parent=self, login=addon.getSetting('login'))
+        login_dialog = LoginDialog('Login to next-episode.net', parent=self, username=addon.getSetting('username'))
         login_dialog.doModal()
+        if not login_dialog.is_cancelled:
+            username = login_dialog.username
+            password = login_dialog.password
+            hash_ = get_password_hash(username, password)
+            addon.setSetting('username', username)
+            addon.setSetting('hash', hash_)
         del login_dialog
-        raise NotImplementedError
