@@ -5,6 +5,7 @@
 import json
 import urllib2
 from contextlib import closing
+from medialibrary import get_movies, get_tvshows, get_episodes
 
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
@@ -49,6 +50,39 @@ def get_password_hash(username, password):
     :rtype: str
     """
     return json.loads(web_client(LOGIN, {'username': username, 'password': password}))['hash']
+
+
+def prepare_movies_list():
+    """
+    Prepare the list of movies to be sent to next-episodes.net
+
+    :return: prepared list
+    :rtype: list
+    """
+    listing = []
+    for movie in get_movies():
+        imdb_id = movie['imdbnumber']
+        watched = '1' if int(movie['playcount']) else '0'
+        listing.append({'imdb_id': imdb_id, 'watched': watched})
+    return listing
+
+
+def prepare_episodes_list():
+    """
+    Prepare the list of TV episodes to be sent to next-episode.net
+
+    :return: prepared list
+    :rtype: list
+    """
+    listing = []
+    for show in get_tvshows():
+        thetvdb_id = show['imdbnumber']
+        for episode in get_episodes(show['tvshowid']):
+            season_n = str(episode['season'])
+            episode_n = str(episode['episode'])
+            watched = '1' if int(episode['playcount']) else '0'
+            listing.append({'thetvdb_id': thetvdb_id, 'season': season_n, 'episode': episode_n, 'watched': watched})
+    return listing
 
 
 if __name__ == '__main__':
