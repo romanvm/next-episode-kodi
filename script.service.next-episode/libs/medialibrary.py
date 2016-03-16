@@ -17,9 +17,11 @@ def json_request(method, params):
     :return: JSON-RPC response
     :rtype: dict
     """
-    return json.loads(xbmc.executeJSONRPC(json.dumps({
+    result = xbmc.executeJSONRPC(json.dumps({
         'jsonrpc': '2.0', 'method': method, 'params': params, 'id': '1'
-    })))
+    }))
+    xbmc.log('JSON-RPC reply: {}'.format(result), xbmc.LOGNOTICE)
+    return json.loads(result)
 
 
 def get_movies():
@@ -31,7 +33,7 @@ def get_movies():
     :rtype: list
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetMovies', params)['movies']
+    return json_request('VideoLibrary.GetMovies', params)['result']['movies']
 
 
 def get_tvshows():
@@ -43,7 +45,7 @@ def get_tvshows():
     :rtype: list
     """
     params = {'properties': ['imdbnumber'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetTVShows', params)['tvshows']
+    return json_request('VideoLibrary.GetTVShows', params)['result']['tvshows']
 
 
 def get_episodes(tvshowid):
@@ -57,4 +59,4 @@ def get_episodes(tvshowid):
     :rtype: list
     """
     params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount']}
-    return json_request('VideoLibrary.GetEpisodes', params)['episodes']
+    return json_request('VideoLibrary.GetEpisodes', params)['result']['episodes']
