@@ -5,9 +5,10 @@
 from abc import ABCMeta, abstractmethod
 import xbmc
 from xbmcaddon import Addon
-from xbmcgui import Dialog
+from xbmcgui import Dialog, ACTION_NAV_BACK
 import pyxbmct
 from nextepisode import get_password_hash, prepare_movies_list, prepare_episodes_list, update_data
+from medialibrary import get_movies, get_tvshows, get_episodes
 
 addon = Addon()
 ui = addon.getLocalizedString
@@ -32,7 +33,7 @@ class NextEpDialog(pyxbmct.AddonDialogWindow):
 
     @abstractmethod
     def _set_connections(self):
-        self.connect(pyxbmct.ACTION_NAV_BACK, self.close)
+        self.connect(ACTION_NAV_BACK, self.close)
 
     @abstractmethod
     def _set_navigation(self):
@@ -112,7 +113,7 @@ class MainDialog(NextEpDialog):
         self._enter_login_btn = pyxbmct.Button('Enter username and password')
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
         if not addon.getSetting('hash'):
-            Dialog().ok('Login required!', 'Select "Enter login and password" menu item',
+            Dialog().ok('Login required!', 'Select "Enter username and password" menu item',
                         'and enter credentials for next-episode.net.')
 
     def _set_connections(self):
@@ -137,15 +138,17 @@ class MainDialog(NextEpDialog):
         if Dialog().yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
             username = addon.getSetting('username')
             hash_ = addon.getSetting('hash')
-            movies = prepare_movies_list()
-            episodes = prepare_episodes_list()
+            movies = prepare_movies_list(get_movies())
+            episodes = []
+            for show in get_tvshows():
+                episodes += prepare_episodes_list(get_episodes(show['tvshowid']), show['imdbnumber'])
             data = {
                 'user': {'username': username, 'hash': hash_},
                 'movies': movies,
                 'tvshows': episodes
             }
-            reply = update_data(data)
-            xbmc.log('next-episode reply:\n{}'.format(reply), xbmc.LOGNOTICE)
+            xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+            update_data(data)
 
     def _enter_login(self):
         login_dialog = LoginDialog('Login to next-episode.net', parent=self, username=addon.getSetting('username'))

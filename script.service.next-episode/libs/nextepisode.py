@@ -5,7 +5,7 @@
 import json
 import urllib2
 from contextlib import closing
-from medialibrary import get_movies, get_tvshows, get_episodes
+import xbmc
 
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
@@ -24,7 +24,9 @@ def web_client(url, data=None):
         data = json.dumps(data)
     request = urllib2.Request(url, data, headers={'Content-Type': 'application/json'})
     with closing(urllib2.urlopen(request)) as response:
-        return response.read()
+        result = response.read()
+        xbmc.log('next-episode reply:\n{0}'.format(result), xbmc.LOGNOTICE)
+        return result
 
 
 def update_data(data):
@@ -52,36 +54,40 @@ def get_password_hash(username, password):
     return json.loads(web_client(LOGIN, {'username': username, 'password': password}))['hash']
 
 
-def prepare_movies_list():
+def prepare_movies_list(raw_movies):
     """
     Prepare the list of movies to be sent to next-episodes.net
 
+    :param raw_movies: raw movie list from Kodi
+    :type raw_movies: list
     :return: prepared list
     :rtype: list
     """
     listing = []
-    for movie in get_movies():
+    for movie in raw_movies:
         imdb_id = movie['imdbnumber']
         watched = '1' if int(movie['playcount']) else '0'
         listing.append({'imdb_id': imdb_id, 'watched': watched})
     return listing
 
 
-def prepare_episodes_list():
+def prepare_episodes_list(raw_episodes, thetvdb_id):
     """
     Prepare the list of TV episodes to be sent to next-episode.net
 
+    :param raw_episodes: raw episode list for a TV show from Kodi
+    :type raw_episodes: list
+    :param thetvdb_id: TVDB id for a TV show
+    :type thetvdb_id: str
     :return: prepared list
     :rtype: list
     """
     listing = []
-    for show in get_tvshows():
-        thetvdb_id = show['imdbnumber']
-        for episode in get_episodes(show['tvshowid']):
-            season_n = str(episode['season'])
-            episode_n = str(episode['episode'])
-            watched = '1' if int(episode['playcount']) else '0'
-            listing.append({'thetvdb_id': thetvdb_id, 'season': season_n, 'episode': episode_n, 'watched': watched})
+    for episode in raw_episodes:
+        season_n = str(episode['season'])
+        episode_n = str(episode['episode'])
+        watched = '1' if int(episode['playcount']) else '0'
+        listing.append({'thetvdb_id': thetvdb_id, 'season': season_n, 'episode': episode_n, 'watched': watched})
     return listing
 
 
