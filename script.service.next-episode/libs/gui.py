@@ -131,15 +131,15 @@ class MainDialog(NextEpDialog):
 
     def _sync_library(self):
         if dialog.yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
-            username = addon.getSetting('username')
-            hash_ = addon.getSetting('hash')
-            movies = prepare_movies_list(get_movies())
             episodes = []
             for show in get_tvshows():
                 episodes += prepare_episodes_list(get_episodes(show['tvshowid']), show['imdbnumber'])
             data = {
-                'user': {'username': username, 'hash': hash_},
-                'movies': movies,
+                'user': {
+                    'username': addon.getSetting('username'),
+                    'hash': addon.getSetting('hash')
+                },
+                'movies': prepare_movies_list(get_movies()),
                 'tvshows': episodes
             }
             xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
