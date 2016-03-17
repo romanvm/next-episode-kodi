@@ -7,11 +7,12 @@ import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog, ACTION_NAV_BACK
 import pyxbmct
-from nextepisode import get_password_hash, prepare_movies_list, prepare_episodes_list, update_data
+from nextepisode import get_password_hash, prepare_movies_list, prepare_episodes_list, update_data, LoginError
 from medialibrary import get_movies, get_tvshows, get_episodes
 
 addon = Addon()
-ui = addon.getLocalizedString
+_ui = addon.getLocalizedString
+dialog = Dialog()
 
 
 class NextEpDialog(pyxbmct.AddonDialogWindow):
@@ -48,9 +49,8 @@ class LoginDialog(NextEpDialog):
     """
     Enter login/password dialog
     """
-    def __init__(self, title='', parent=None, username=''):
+    def __init__(self, title='', username=''):
         super(LoginDialog, self).__init__(title)
-        self._parent = parent
         self.username = username
         self._username_field.setText(username)
         self.password = ''
@@ -84,10 +84,6 @@ class LoginDialog(NextEpDialog):
         self._cancel_btn.setNavigation(self._password_field, self._username_field, self._ok_btn, self._ok_btn)
         self.setFocus(self._username_field)
 
-    def doModal(self):
-        self._parent.close()
-        super(LoginDialog, self).doModal()
-
     def _ok(self):
         self.is_cancelled = False
         self.username = self._username_field.getText()
@@ -98,7 +94,6 @@ class LoginDialog(NextEpDialog):
         if self.is_cancelled:
             self.username = self.password = ''
         super(LoginDialog, self).close()
-        self._parent.doModal()
 
 
 class MainDialog(NextEpDialog):
@@ -135,7 +130,7 @@ class MainDialog(NextEpDialog):
         raise NotImplementedError
 
     def _sync_library(self):
-        if Dialog().yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
+        if dialog.yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
             username = addon.getSetting('username')
             hash_ = addon.getSetting('hash')
             movies = prepare_movies_list(get_movies())
@@ -151,12 +146,17 @@ class MainDialog(NextEpDialog):
             update_data(data)
 
     def _enter_login(self):
-        login_dialog = LoginDialog('Login to next-episode.net', parent=self, username=addon.getSetting('username'))
+        self.close()
+        login_dialog = LoginDialog('Login to next-episode.net', username=addon.getSetting('username'))
         login_dialog.doModal()
         if not login_dialog.is_cancelled:
             username = login_dialog.username
             password = login_dialog.password
-            hash_ = get_password_hash(username, password)
-            addon.setSetting('username', username)
-            addon.setSetting('hash', hash_)
-        del login_dialog
+            try:
+                hash_ = get_password_hash(username, password)
+            except LoginError:
+                dialog.ok('Login error!', 'Check login/password and try again.')
+            else:
+                addon.setSetting('username', username)
+                addon.setSetting('hash', hash_)
+        self.doModal()

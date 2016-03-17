@@ -6,4 +6,3 @@ from libs.gui import MainDialog
 
 main_dialog = MainDialog('next-episode.net')
 main_dialog.doModal()
-del main_dialog

@@ -11,6 +11,10 @@ UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
 
 
+class LoginError(Exception):
+    pass
+
+
 def web_client(url, data=None):
     """
     Send/receive data to/from next-episode.net
@@ -50,8 +54,12 @@ def get_password_hash(username, password):
     :type password: str
     :return: password hash
     :rtype: str
+    :raises: LoginError if login fails
     """
-    return json.loads(web_client(LOGIN, {'username': username, 'password': password}))['hash']
+    response = json.loads(web_client(LOGIN, {'username': username, 'password': password}))
+    if 'error' in response:
+        raise LoginError
+    return response['hash']
 
 
 def prepare_movies_list(raw_movies):
