@@ -3,15 +3,13 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 from abc import ABCMeta, abstractmethod
-import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog, ACTION_NAV_BACK
 import pyxbmct
-from nextepisode import get_password_hash, prepare_movies_list, prepare_episodes_list, update_data, LoginError
-from medialibrary import get_movies, get_tvshows, get_episodes
+from nextepisode import get_password_hash, LoginError
+from commands import sync_library, sync_new_items
 
 addon = Addon()
-_ui = addon.getLocalizedString
 dialog = Dialog()
 
 
@@ -108,8 +106,8 @@ class MainDialog(NextEpDialog):
         self._enter_login_btn = pyxbmct.Button('Enter username and password')
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
         if not addon.getSetting('hash'):
-            Dialog().ok('Login required!', 'Select "Enter username and password" menu item',
-                        'and enter credentials for next-episode.net.')
+            dialog.ok('Login required!', 'Select "Enter username and password" menu item',
+                      'and enter credentials for next-episode.net.')
 
     def _set_connections(self):
         super(MainDialog, self)._set_connections()
@@ -127,23 +125,10 @@ class MainDialog(NextEpDialog):
         self.setFocus(self._sync_new_btn)
 
     def _sync_new_items(self):
-        raise NotImplementedError
+        sync_new_items()
 
     def _sync_library(self):
-        if dialog.yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
-            episodes = []
-            for show in get_tvshows():
-                episodes += prepare_episodes_list(get_episodes(show['tvshowid']), show['imdbnumber'])
-            data = {
-                'user': {
-                    'username': addon.getSetting('username'),
-                    'hash': addon.getSetting('hash')
-                },
-                'movies': prepare_movies_list(get_movies()),
-                'tvshows': episodes
-            }
-            xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-            update_data(data)
+        sync_library()
 
     def _enter_login(self):
         self.close()

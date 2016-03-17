@@ -20,7 +20,7 @@ def json_request(method, params):
     result = xbmc.executeJSONRPC(json.dumps({
         'jsonrpc': '2.0', 'method': method, 'params': params, 'id': '1'
     }))
-    xbmc.log('JSON-RPC reply: {}'.format(result), xbmc.LOGNOTICE)
+    xbmc.log('JSON-RPC reply: {0}'.format(result), xbmc.LOGNOTICE)
     return json.loads(result)
 
 
@@ -50,7 +50,7 @@ def get_tvshows():
 
 def get_episodes(tvshowid):
     """
-    Get the lis of episodes from a specific TV show
+    Get the list of episodes from a specific TV show
 
     :param tvshowid: internal Kodi database ID for a TV show
     :type tvshowid: str
@@ -58,5 +58,40 @@ def get_episodes(tvshowid):
         ``{u'season': 4, u'playcount': 0, u'episode': 1, u'episodeid': 5, u'label': u'4x01. The Drone Queen'}``
     :rtype: list
     """
-    params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount']}
+    params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount', 'tvshowid']}
     return json_request('VideoLibrary.GetEpisodes', params)['result']['episodes']
+
+
+def get_tvdb_id(tvshowid):
+    """
+    Get TheTVDB ID for a TV show
+
+    :param tvshowid: internal Kodi database ID for a TV show
+    :type tvshowid: str
+    :return: TheTVDB ID
+    :rtype: str
+    """
+    params = {'tvshowid': tvshowid, 'properties': ['imdbnumber']}
+    return json_request('VideoLibrary.GetTVShowDetails', params)['result']['tvshowdetails']['imdbnumber']
+
+
+def get_recent_movies():
+    """
+    Get the list of recently added movies
+
+    :return: the list of recent movies
+    :rtype: list
+    """
+    params = {'properties': ['imdbnumber', 'playcount']}
+    return json_request('VideoLibrary.GetRecentlyAddedMovies', params)['result']['movies']
+
+
+def get_recent_episodes():
+    """
+    Get the list of recently added episodes
+
+    :return: the list of recent episodes
+    :rtype: list
+    """
+    params = {'properties': ['playcount', 'tvshowid', 'season', 'episode']}
+    return json_request('VideoLibrary.GetRecentlyAddedEpisodes', params)['result']['episodes']

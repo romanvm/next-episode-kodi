@@ -6,6 +6,7 @@ import json
 import urllib2
 from contextlib import closing
 import xbmc
+from medialibrary import get_tvdb_id
 
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
@@ -79,23 +80,25 @@ def prepare_movies_list(raw_movies):
     return listing
 
 
-def prepare_episodes_list(raw_episodes, thetvdb_id):
+def prepare_episodes_list(raw_episodes):
     """
     Prepare the list of TV episodes to be sent to next-episode.net
 
     :param raw_episodes: raw episode list for a TV show from Kodi
     :type raw_episodes: list
-    :param thetvdb_id: TVDB id for a TV show
-    :type thetvdb_id: str
     :return: prepared list
     :rtype: list
     """
     listing = []
+    thetvdb_id_map = {}
     for episode in raw_episodes:
         season_n = str(episode['season'])
         episode_n = str(episode['episode'])
         watched = '1' if int(episode['playcount']) else '0'
-        listing.append({'thetvdb_id': thetvdb_id, 'season': season_n, 'episode': episode_n, 'watched': watched})
+        if not thetvdb_id_map.get(episode['tvshowid']):
+            thetvdb_id_map[episode['tvshowid']] = get_tvdb_id(episode['tvshowid'])
+        listing.append({'thetvdb_id': thetvdb_id_map[episode['tvshowid']], 'season': season_n, 'episode': episode_n,
+                        'watched': watched})
     return listing
 
 
