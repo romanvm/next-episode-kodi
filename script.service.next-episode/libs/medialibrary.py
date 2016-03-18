@@ -6,7 +6,7 @@ import json
 import xbmc
 
 
-def json_request(method, params=None):
+def send_json_rpc(method, params=None):
     """
     Send JSON-RPC to Kodi
 
@@ -20,9 +20,11 @@ def json_request(method, params=None):
     request = {'jsonrpc': '2.0', 'method': method, 'id': '1'}
     if params is not None:
         request['params'] = params
-    reply = xbmc.executeJSONRPC(json.dumps(params))
-    xbmc.log('JSON-RPC reply: {0}'.format(reply), xbmc.LOGNOTICE)
-    return json.loads(reply)['result']
+    json_request = json.dumps(request)
+    xbmc.log('JSON-RPC request: {0}'.format(request), xbmc.LOGNOTICE)
+    json_reply = xbmc.executeJSONRPC(json_request)
+    xbmc.log('JSON-RPC reply: {0}'.format(json_reply), xbmc.LOGNOTICE)
+    return json.loads(json_reply)['result']
 
 
 def get_movies():
@@ -34,7 +36,7 @@ def get_movies():
     :rtype: list
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetMovies', params)['movies']
+    return send_json_rpc('VideoLibrary.GetMovies', params)['movies']
 
 
 def get_tvshows():
@@ -46,7 +48,7 @@ def get_tvshows():
     :rtype: list
     """
     params = {'properties': ['imdbnumber'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetTVShows', params)['tvshows']
+    return send_json_rpc('VideoLibrary.GetTVShows', params)['tvshows']
 
 
 def get_episodes(tvshowid):
@@ -60,7 +62,7 @@ def get_episodes(tvshowid):
     :rtype: list
     """
     params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount', 'tvshowid']}
-    return json_request('VideoLibrary.GetEpisodes', params)['episodes']
+    return send_json_rpc('VideoLibrary.GetEpisodes', params)['episodes']
 
 
 def get_tvdb_id(tvshowid):
@@ -73,7 +75,7 @@ def get_tvdb_id(tvshowid):
     :rtype: str
     """
     params = {'tvshowid': tvshowid, 'properties': ['imdbnumber']}
-    return json_request('VideoLibrary.GetTVShowDetails', params)['tvshowdetails']['imdbnumber']
+    return send_json_rpc('VideoLibrary.GetTVShowDetails', params)['tvshowdetails']['imdbnumber']
 
 
 def get_recent_movies():
@@ -84,7 +86,7 @@ def get_recent_movies():
     :rtype: list
     """
     params = {'properties': ['imdbnumber', 'playcount']}
-    return json_request('VideoLibrary.GetRecentlyAddedMovies', params)['movies']
+    return send_json_rpc('VideoLibrary.GetRecentlyAddedMovies', params)['movies']
 
 
 def get_recent_episodes():
@@ -95,7 +97,7 @@ def get_recent_episodes():
     :rtype: list
     """
     params = {'properties': ['playcount', 'tvshowid', 'season', 'episode']}
-    return json_request('VideoLibrary.GetRecentlyAddedEpisodes', params)['episodes']
+    return send_json_rpc('VideoLibrary.GetRecentlyAddedEpisodes', params)['episodes']
 
 
 def get_now_played():
@@ -118,12 +120,12 @@ def get_now_played():
             u'playcount': 0, u'type': u'episode', u'id': 1}
     """
     playerid = -1
-    for player in json_request('Player.GetActivePlayers'):
+    for player in send_json_rpc('Player.GetActivePlayers'):
         if player['type'] == 'video':
             playerid = player['playerid']
             break
     params = {'playerid': playerid, 'properties': ['playcount', 'imdbnumber', 'season', 'episode', 'tvshowid']}
-    return json_request('Player.GetItem', params)['item']
+    return send_json_rpc('Player.GetItem', params)['item']
 
 
 def get_playcount(id_, type):
@@ -142,4 +144,4 @@ def get_playcount(id_, type):
     else:
         method = 'VideoLibrary.GetEpisodeDetails'
     params = {type + 'id': id_, 'properties': ['playcount']}
-    return json_request(method, params)[type + 'details']['playcount']
+    return send_json_rpc(method, params)[type + 'details']['playcount']

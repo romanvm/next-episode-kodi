@@ -5,7 +5,7 @@
 import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
-from medialibrary import get_movies, get_tvshows, get_episodes, get_recent_movies, get_recent_episodes
+from medialibrary import get_movies, get_tvshows, get_episodes, get_recent_movies, get_recent_episodes, get_tvdb_id
 from nextepisode import prepare_movies_list, prepare_episodes_list, update_data
 
 addon = Addon()
@@ -44,5 +44,33 @@ def sync_new_items():
     'movies': prepare_movies_list(get_recent_movies()),
     'tvshows': prepare_episodes_list(get_recent_episodes())
         }
+    xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+    update_data(data)
+
+
+def update_single_item(item):
+    """
+    Syncronize single item (movie or episode) with next-episode-net
+
+    :param item: video item
+    :type item: dict
+    """
+    data = {
+        'user': {
+            'username': addon.getSetting('username'),
+            'hash': addon.getSetting('hash')
+    }}
+    if item['type'] == 'episode':
+        data['tvshows'] = [{
+            'thetvdb_id': get_tvdb_id(item['tvshowid']),
+            'season': str(item['season']),
+            'episode': str(item['episode']),
+            'watched': '1' if item['playcount'] else '0'
+            }]
+    elif item['type'] == 'movie':
+        data['movies'] = [{
+            'imdb_id': item['imdbnumber'],
+            'watched': '1' if item['playcount'] else '0'
+        }]
     xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
     update_data(data)
