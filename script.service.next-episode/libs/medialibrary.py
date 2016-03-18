@@ -6,7 +6,7 @@ import json
 import xbmc
 
 
-def json_request(method, params):
+def json_request(method, params=None):
     """
     Send JSON-RPC to Kodi
 
@@ -17,11 +17,12 @@ def json_request(method, params):
     :return: JSON-RPC response
     :rtype: dict
     """
-    result = xbmc.executeJSONRPC(json.dumps({
-        'jsonrpc': '2.0', 'method': method, 'params': params, 'id': '1'
-    }))
-    xbmc.log('JSON-RPC reply: {0}'.format(result), xbmc.LOGNOTICE)
-    return json.loads(result)
+    request = {'jsonrpc': '2.0', 'method': method, 'id': '1'}
+    if params is not None:
+        request['params'] = params
+    reply = xbmc.executeJSONRPC(json.dumps(params))
+    xbmc.log('JSON-RPC reply: {0}'.format(reply), xbmc.LOGNOTICE)
+    return json.loads(reply)['result']
 
 
 def get_movies():
@@ -33,7 +34,7 @@ def get_movies():
     :rtype: list
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetMovies', params)['result']['movies']
+    return json_request('VideoLibrary.GetMovies', params)['movies']
 
 
 def get_tvshows():
@@ -45,7 +46,7 @@ def get_tvshows():
     :rtype: list
     """
     params = {'properties': ['imdbnumber'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return json_request('VideoLibrary.GetTVShows', params)['result']['tvshows']
+    return json_request('VideoLibrary.GetTVShows', params)['tvshows']
 
 
 def get_episodes(tvshowid):
@@ -59,7 +60,7 @@ def get_episodes(tvshowid):
     :rtype: list
     """
     params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount', 'tvshowid']}
-    return json_request('VideoLibrary.GetEpisodes', params)['result']['episodes']
+    return json_request('VideoLibrary.GetEpisodes', params)['episodes']
 
 
 def get_tvdb_id(tvshowid):
@@ -72,7 +73,7 @@ def get_tvdb_id(tvshowid):
     :rtype: str
     """
     params = {'tvshowid': tvshowid, 'properties': ['imdbnumber']}
-    return json_request('VideoLibrary.GetTVShowDetails', params)['result']['tvshowdetails']['imdbnumber']
+    return json_request('VideoLibrary.GetTVShowDetails', params)['tvshowdetails']['imdbnumber']
 
 
 def get_recent_movies():
@@ -83,7 +84,7 @@ def get_recent_movies():
     :rtype: list
     """
     params = {'properties': ['imdbnumber', 'playcount']}
-    return json_request('VideoLibrary.GetRecentlyAddedMovies', params)['result']['movies']
+    return json_request('VideoLibrary.GetRecentlyAddedMovies', params)['movies']
 
 
 def get_recent_episodes():
@@ -94,4 +95,51 @@ def get_recent_episodes():
     :rtype: list
     """
     params = {'properties': ['playcount', 'tvshowid', 'season', 'episode']}
-    return json_request('VideoLibrary.GetRecentlyAddedEpisodes', params)['result']['episodes']
+    return json_request('VideoLibrary.GetRecentlyAddedEpisodes', params)['episodes']
+
+
+def get_now_played():
+    """
+    Get nov played item
+
+    :return: now played item's data
+    :rtype: dict
+
+    Example movie::
+
+        {u'tvshowid': -1, u'episode': -1, u'season': -1,
+            u'label': u'12 Years a Slave', u'imdbnumber': u'tt2024544',
+            u'playcount': 0, u'type': u'movie', u'id': 1}
+
+    Example episode::
+
+        {u'tvshowid': 1, u'episode': 11, u'season': 4,
+            u'label': u'The Path of Destruction', u'imdbnumber': u'',
+            u'playcount': 0, u'type': u'episode', u'id': 1}
+    """
+    playerid = -1
+    for player in json_request('Player.GetActivePlayers'):
+        if player['type'] == 'video':
+            playerid = player['playerid']
+            break
+    params = {'playerid': playerid, 'properties': ['playcount', 'imdbnumber', 'season', 'episode', 'tvshowid']}
+    return json_request('Player.GetItem', params)['item']
+
+
+def get_playcount(id_, type):
+    """
+    Get video item playcount
+
+    :param id_: movie or episode Kodi database ID
+    :type id_: int
+    :param type: items's type -- 'movie' or 'episode'
+    :type type: str
+    :return: playcount
+    :rtype: int
+    """
+    if type == 'movie':
+        method = 'VideoLibrary.GetMovieDetails'
+    else:
+        method = 'VideoLibrary.GetEpisodeDetails'
+    params = {type + 'id': id_, 'properties': ['playcount']}
+    return json_request(method, params)[type + 'details']['playcount']
