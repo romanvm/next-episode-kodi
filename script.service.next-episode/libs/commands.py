@@ -37,13 +37,13 @@ def sync_new_items():
     Syncronize new video items with next-episode.net
     """
     data = {
-    'user': {
-        'username': addon.getSetting('username'),
-        'hash': addon.getSetting('hash')
-    },
-    'movies': prepare_movies_list(get_recent_movies()),
-    'tvshows': prepare_episodes_list(get_recent_episodes())
-        }
+        'user': {
+            'username': addon.getSetting('username'),
+            'hash': addon.getSetting('hash')
+        },
+        'movies': prepare_movies_list(get_recent_movies()),
+        'tvshows': prepare_episodes_list(get_recent_episodes())
+    }
     xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
     update_data(data)
 
