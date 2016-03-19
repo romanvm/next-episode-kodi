@@ -75,7 +75,7 @@ def prepare_movies_list(raw_movies):
     listing = []
     for movie in raw_movies:
         imdb_id = movie['imdbnumber']
-        watched = '1' if int(movie['playcount']) else '0'
+        watched = '1' if movie['playcount'] else '0'
         listing.append({'imdb_id': imdb_id, 'watched': watched})
     return listing
 
@@ -94,26 +94,9 @@ def prepare_episodes_list(raw_episodes):
     for episode in raw_episodes:
         season_n = str(episode['season'])
         episode_n = str(episode['episode'])
-        watched = '1' if int(episode['playcount']) else '0'
-        if not thetvdb_id_map.get(episode['tvshowid']):
+        watched = '1' if episode['playcount'] else '0'
+        if episode['tvshowid'] not in thetvdb_id_map:
             thetvdb_id_map[episode['tvshowid']] = get_tvdb_id(episode['tvshowid'])
         listing.append({'thetvdb_id': thetvdb_id_map[episode['tvshowid']], 'season': season_n, 'episode': episode_n,
                         'watched': watched})
     return listing
-
-
-if __name__ == '__main__':
-    data = {
-        'user': {'username': 'foo',
-                 'hash': 'bar'},
-        'tvshows': [
-            {'thetvdb_id': '76290', 'season': '1', 'episode': '1', 'watched': '1'},
-            {'thetvdb_id': '76290', 'season': '1', 'episode': '2', 'watched': '0'}
-        ],
-        'movies': [
-            {'imdb_id': 'tt1431045', 'watched': '1'},
-        ]}
-
-    login = {'username': 'test','password': 'test123'}
-    print update_data(data)
-    print get_password_hash(login['username'], login['password'])

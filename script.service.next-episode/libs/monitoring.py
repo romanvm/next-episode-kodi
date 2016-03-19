@@ -5,7 +5,7 @@
 import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
-from commands import sync_new_items, login
+from commands import sync_library, sync_new_items, login
 
 addon = Addon()
 dialog = Dialog()
@@ -26,10 +26,13 @@ def initial_prompt():
     Show login prompt at first start
     """
     if (addon.getSetting('prompt_shown') != 'true' and
-        not addon.getSetting('username') and
-        dialog.yesno('Login required!',
-                     'You need to login to next-episode.net',
-                     'to synchronize your video library data.',
-                     'Open Settings dialog to login?')):
-        addon.openSettings()
+            not addon.getSetting('username') and
+            dialog.yesno('Login required!',
+                         'You need to login to next-episode.net',
+                         'to synchronize your video library data.',
+                         'Login now?')):
+        if login() and dialog.yesno('Library synchronization',
+                                    'You need to synchronize your video library with next-episode.net.',
+                                    'Synchronize now?'):
+            sync_library()
         addon.setSetting('prompt_shown', 'true')

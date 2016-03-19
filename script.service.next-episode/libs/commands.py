@@ -85,6 +85,9 @@ def update_single_item(item):
 def login():
     """
     Login to next-episode.net
+
+    :return: ``True`` on successful login
+    :rtype: bool
     """
     login_dialog = LoginDialog('Login to next-episode.net', username=addon.getSetting('username'))
     login_dialog.doModal()
@@ -96,11 +99,13 @@ def login():
         except LoginError:
             dialog.ok('Login error!', 'Check login/password and try again.')
             xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
+            return False
         else:
             addon.setSetting('username', username)
             addon.setSetting('hash', hash_)
             xbmc.log('next-episode.net: successful login', xbmc.LOGNOTICE)
-            dialog.notification('next-episode.net', 'Successful login', sound=False)
+            dialog.notification('next-episode.net', 'Successful login', time=3000, sound=False)
+            return True
 
 
 if __name__ == '__main__':
