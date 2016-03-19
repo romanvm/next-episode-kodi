@@ -6,6 +6,10 @@ import json
 import xbmc
 
 
+class NoDataError(Exception):
+    pass
+
+
 def send_json_rpc(method, params=None):
     """
     Send JSON-RPC to Kodi
@@ -60,9 +64,13 @@ def get_episodes(tvshowid):
     :return: the liso of episode data as Python dicts like this:
         ``{u'season': 4, u'playcount': 0, u'episode': 1, u'episodeid': 5, u'label': u'4x01. The Drone Queen'}``
     :rtype: list
+    :raises: NoDataError if a TV show has no episodes.
     """
     params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount', 'tvshowid']}
-    return send_json_rpc('VideoLibrary.GetEpisodes', params)['episodes']
+    result = send_json_rpc('VideoLibrary.GetEpisodes', params)
+    if not result.get('episodes'):
+        raise NoDataError
+    return result['episodes']
 
 
 def get_tvdb_id(tvshowid):

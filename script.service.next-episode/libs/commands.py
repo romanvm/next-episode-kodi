@@ -6,7 +6,8 @@ import sys
 import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
-from medialibrary import get_movies, get_tvshows, get_episodes, get_recent_movies, get_recent_episodes, get_tvdb_id
+from medialibrary import (get_movies, get_tvshows, get_episodes, get_recent_movies,
+                          get_recent_episodes, get_tvdb_id, NoDataError)
 from nextepisode import prepare_movies_list, prepare_episodes_list, update_data, get_password_hash, LoginError
 from gui import LoginDialog
 
@@ -21,7 +22,10 @@ def sync_library():
     if dialog.yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
         episodes = []
         for show in get_tvshows():
-            episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+            try:
+                episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+            except NoDataError:
+                continue
         data = {
             'user': {
                 'username': addon.getSetting('username'),
