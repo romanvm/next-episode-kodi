@@ -3,10 +3,11 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 import xbmc
-from libs.monitoring import UpdateMonitor
+from libs.monitoring import UpdateMonitor, initial_prompt
 from libs.medialibrary import get_now_played, get_playcount
 from libs.commands import update_single_item
 
+initial_prompt()
 update_monitor = UpdateMonitor()
 service_started = False
 now_played = None

@@ -2,13 +2,15 @@
 # Created on: 17.03.2016
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
+import sys
 import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
 from medialibrary import get_movies, get_tvshows, get_episodes, get_recent_movies, get_recent_episodes, get_tvdb_id
-from nextepisode import prepare_movies_list, prepare_episodes_list, update_data
+from nextepisode import prepare_movies_list, prepare_episodes_list, update_data, get_password_hash, LoginError
+from gui import LoginDialog
 
-addon = Addon()
+addon = Addon('script.service.next-episode')
 dialog = Dialog()
 
 
@@ -59,7 +61,7 @@ def update_single_item(item):
         'user': {
             'username': addon.getSetting('username'),
             'hash': addon.getSetting('hash')
-    }}
+        }}
     if item['type'] == 'episode':
         data['tvshows'] = [{
             'thetvdb_id': get_tvdb_id(item['tvshowid']),
@@ -74,3 +76,33 @@ def update_single_item(item):
         }]
     xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
     update_data(data)
+
+
+def login():
+    """
+    Login to next-episode.net
+    """
+    login_dialog = LoginDialog('Login to next-episode.net', username=addon.getSetting('username'))
+    login_dialog.doModal()
+    if not login_dialog.is_cancelled:
+        username = login_dialog.username
+        password = login_dialog.password
+        try:
+            hash_ = get_password_hash(username, password)
+        except LoginError:
+            dialog.ok('Login error!', 'Check login/password and try again.')
+            xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
+        else:
+            addon.setSetting('username', username)
+            addon.setSetting('hash', hash_)
+            xbmc.log('next-episode.net: successful login', xbmc.LOGNOTICE)
+            dialog.notification('next-episode.net', 'Successful login', sound=False)
+
+
+if __name__ == '__main__':
+    if sys.argv[1] == 'sync_library':
+        sync_library()
+    elif sys.argv[1] == 'sync_new_items':
+        sync_new_items()
+    elif sys.argv[1] == 'login':
+        login()

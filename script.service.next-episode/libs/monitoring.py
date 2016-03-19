@@ -3,7 +3,12 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 import xbmc
-from commands import sync_new_items
+from xbmcaddon import Addon
+from xbmcgui import Dialog
+from commands import sync_new_items, login
+
+addon = Addon()
+dialog = Dialog()
 
 
 class UpdateMonitor(xbmc.Monitor):
@@ -14,3 +19,17 @@ class UpdateMonitor(xbmc.Monitor):
         if library == 'video':
             sync_new_items()
             xbmc.log('next-episode.net: new items updated', xbmc.LOGNOTICE)
+
+
+def initial_prompt():
+    """
+    Show login prompt at first start
+    """
+    if (addon.getSetting('prompt_shown') != 'true' and
+        not addon.getSetting('username') and
+        dialog.yesno('Login required!',
+                     'You need to login to next-episode.net',
+                     'to synchronize your video library data.',
+                     'Open Settings dialog to login?')):
+        addon.openSettings()
+        addon.setSetting('prompt_shown', 'true')
