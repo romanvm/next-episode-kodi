@@ -8,6 +8,9 @@
     <import addon="script.module.pyxbmct" version="1.1.0" />
   </requires>
   <extension point="xbmc.service" library="service.py" start="[login|startup]" />
+  <extension point="xbmc.python.script" library="main.py">
+    <provides>executable</provides>
+  </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en">next-episode.net service</summary>
