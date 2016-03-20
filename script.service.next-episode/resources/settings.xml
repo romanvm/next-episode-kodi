@@ -10,5 +10,6 @@
     <setting type="action"
              label="Upload new video items data to next-episode.net"
              action="RunScript($CWD/libs/commands.py,sync_new_items)" />
+    <setting label="Prompt" type="text" id="prompt_shown" default="false" visible="false" />
   </category>
 </settings>
