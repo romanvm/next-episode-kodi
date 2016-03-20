@@ -9,7 +9,8 @@ from xbmcgui import Dialog
 import pyxbmct
 from medialibrary import (get_movies, get_tvshows, get_episodes, get_recent_movies,
                           get_recent_episodes, get_tvdb_id, NoDataError)
-from nextepisode import prepare_movies_list, prepare_episodes_list, update_data, get_password_hash, LoginError
+from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data,
+                         get_password_hash, LoginError, DataUpdateError)
 from gui import NextEpDialog
 
 addon = Addon('script.service.next-episode')
@@ -79,36 +80,40 @@ def send_data(data):
     except LoginError:
         xbmc.log('next-episode.net: login failed! Re-enter your username and password.', xbmc.LOGERROR)
         dialog.notification('next-episode.net', 'Login failed!', icon='error')
+    except DataUpdateError as ex:
+        xbmc.log('next-episodes.net: {0}'.format(ex), xbmc.LOGERROR)
+        dialog.notification('next-episode.net', 'Data update error. See log for more details.', icon='error')
+    else:
+        dialog.notification('next-episode.net', 'Data updated', time=2000, sound=False)
 
 
 def sync_library():
     """
-    Syncronize Kodi video library with next-episode.net
+    Synchronize Kodi video library with next-episode.net
     """
-    if dialog.yesno('Warning!', 'Are you sure you want to sync your video library\nwith next-episode.net?'):
-        xbmc.executebuiltin('ActivateWindow(10138)')
-        episodes = []
-        for show in get_tvshows():
-            try:
-                episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
-            except NoDataError:
-                continue
-        data = {
-            'user': {
-                'username': addon.getSetting('username'),
-                'hash': addon.getSetting('hash')
-            },
-            'movies': prepare_movies_list(get_movies()),
-            'tvshows': episodes
-        }
-        xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-        send_data(data)
-        xbmc.executebuiltin('Dialog.Close(10138)')
+    xbmc.executebuiltin('ActivateWindow(10138)')  # Busy dialog on
+    episodes = []
+    for show in get_tvshows():
+        try:
+            episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+        except NoDataError:
+            continue
+    data = {
+        'user': {
+            'username': addon.getSetting('username'),
+            'hash': addon.getSetting('hash')
+        },
+        'movies': prepare_movies_list(get_movies()),
+        'tvshows': episodes
+    }
+    xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+    send_data(data)
+    xbmc.executebuiltin('Dialog.Close(10138)')  # Busy dialog off
 
 
 def sync_new_items():
     """
-    Syncronize new video items with next-episode.net
+    Synchronize new video items with next-episode.net
     """
     data = {
         'user': {
@@ -124,7 +129,7 @@ def sync_new_items():
 
 def update_single_item(item):
     """
-    Syncronize single item (movie or episode) with next-episode-net
+    Synchronize single item (movie or episode) with next-episode-net
 
     :param item: video item
     :type item: dict

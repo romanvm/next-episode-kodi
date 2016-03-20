@@ -16,6 +16,15 @@ class LoginError(Exception):
     pass
 
 
+class DataUpdateError(Exception):
+    def __init__(self, failed_movies=None, failed_shows=None):
+        self.failed_movies = failed_movies
+        self.failed_shows = failed_shows
+
+    def __str__(self):
+        return 'Data update error! Failed movies: {0}. Failed shows: {1}'.format(self.failed_movies, self.failed_shows)
+
+
 def web_client(url, data=None):
     """
     Send/receive data to/from next-episode.net
@@ -44,10 +53,21 @@ def update_data(data):
     :type data: dict
     :return: next-episode.net response
     :rtype: dict
+    :raises: LoginError if authentication failed
+    :raises: DataUpdateError if movies or episodes fail to update.
     """
     response = json.loads(web_client(UPDATE_DATA, data))
     if 'error' in response and response['error']['code'] == '3':
         raise LoginError
+    else:
+        failed_movies = None
+        failed_shows = None
+        if 'movies' in response and response['movies'].get('error'):
+            failed_movies = response['movies']['error']['message']
+        if 'episodes' in response and response['tv_shows'].get('error'):
+            failed_shows = response['tv_shows']['error']['message']
+        if failed_movies is not None or failed_shows is not None:
+            raise DataUpdateError(failed_movies, failed_shows)
     return response
 
 
