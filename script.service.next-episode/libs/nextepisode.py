@@ -24,6 +24,8 @@ def web_client(url, data=None):
     :type url: str
     :param data: data to be sent in a POST request
     :type data: dict
+    :return. website response content
+    :rtype: str
     """
     if data is not None:
         data = json.dumps(data)
@@ -41,8 +43,12 @@ def update_data(data):
     :param data: data to be send to next-episode.net
     :type data: dict
     :return: next-episode.net response
+    :rtype: dict
     """
-    return web_client(UPDATE_DATA, data)
+    response = json.loads(web_client(UPDATE_DATA, data))
+    if 'error' in response and response['error']['code'] == '3':
+        raise LoginError
+    return response
 
 
 def get_password_hash(username, password):

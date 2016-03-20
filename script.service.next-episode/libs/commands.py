@@ -67,6 +67,20 @@ class LoginDialog(NextEpDialog):
         super(LoginDialog, self).close()
 
 
+def send_data(data):
+    """
+    Send data to next-episode.net and process possible errors
+
+    :param data: data to be sent
+    :type data: dict
+    """
+    try:
+        update_data(data)
+    except LoginError:
+        xbmc.log('next-episode.net: login failed! Re-enter your username and password.', xbmc.LOGERROR)
+        dialog.notification('next-episode.net', 'Login failed!', icon='error')
+
+
 def sync_library():
     """
     Syncronize Kodi video library with next-episode.net
@@ -88,7 +102,7 @@ def sync_library():
             'tvshows': episodes
         }
         xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-        update_data(data)
+        send_data(data)
         xbmc.executebuiltin('Dialog.Close(10138)')
 
 
@@ -105,7 +119,7 @@ def sync_new_items():
         'tvshows': prepare_episodes_list(get_recent_episodes())
     }
     xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-    update_data(data)
+    send_data(data)
 
 
 def update_single_item(item):
@@ -133,7 +147,7 @@ def update_single_item(item):
             'watched': '1' if item['playcount'] else '0'
         }]
     xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-    update_data(data)
+    send_data(data)
 
 
 def login():
@@ -153,7 +167,7 @@ def login():
         try:
             hash_ = get_password_hash(username, password)
         except LoginError:
-            dialog.ok('Login error!', 'Check login/password and try again.')
+            dialog.ok('next-episode.net', 'Login error!', 'Check login/password and try again.')
             xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
         else:
             addon.setSetting('username', username)
