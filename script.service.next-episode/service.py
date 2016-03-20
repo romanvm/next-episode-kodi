@@ -11,18 +11,15 @@ initial_prompt()
 update_monitor = UpdateMonitor()
 service_started = False
 now_played = None
-needs_updating = False
 while not xbmc.abortRequested:
     if xbmc.getCondVisibility('Player.HasVideo') and now_played is None:
         now_played = get_now_played()
-        needs_updating = now_played['type'] in ('movie', 'episode') and now_played['playcount'] == 0
-    elif (not xbmc.getCondVisibility('Player.HasVideo') and
-                now_played is not None and
-                needs_updating and
-                get_playcount(now_played['id'], now_played['type']) > 0):
+    elif not xbmc.getCondVisibility('Player.HasVideo') and now_played is not None:
+        if (now_played['type'] in ('movie', 'episode') and
+                    now_played['playcount'] == 0 and
+                    get_playcount(now_played['id'], now_played['type']) > 0):
             update_single_item(now_played)
-            now_played = None
-            needs_updating = False
+        now_played = None
     if not service_started:
         xbmc.log('next-episode.net: service started', xbmc.LOGNOTICE)
         service_started = True
