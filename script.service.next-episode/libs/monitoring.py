@@ -3,11 +3,11 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 import xbmc
-from xbmcaddon import Addon
 from xbmcgui import Dialog
-from commands import sync_library, sync_new_items, login
+from commands import sync_library, sync_new_items, login, addon
+# Here ``addon`` is imported from another module to prevent a bug
+# when username and hash are not stored in the addon settings.
 
-addon = Addon()
 dialog = Dialog()
 
 
