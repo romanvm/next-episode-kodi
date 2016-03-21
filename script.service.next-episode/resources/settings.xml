@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-  <category label="General">
+  <category label="32000">
     <setting type="action"
-             label="Login to next-episode.net"
+             label="32001"
              action="RunScript($CWD/libs/commands.py,login)" />
     <setting type="action"
-             label="Upload Kodi video library data to next-episode.net"
+             label="32002"
              action="RunScript($CWD/libs/commands.py,sync_library)" />
     <setting type="action"
              label="Upload new video items data to next-episode.net"

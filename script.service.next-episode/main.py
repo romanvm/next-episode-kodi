@@ -3,7 +3,7 @@
 # E-mail: romanvm@yandex.ua
 
 import pyxbmct
-from libs.gui import NextEpDialog
+from libs.gui import NextEpDialog, ui_string
 from libs.commands import sync_library, sync_new_items, login
 
 
@@ -12,9 +12,9 @@ class MainDialog(NextEpDialog):
     Main UI dialog
     """
     def _set_controls(self):
-        self._enter_login_btn = pyxbmct.Button('Enter username and password')
+        self._enter_login_btn = pyxbmct.Button(ui_string(32001))
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
-        self._sync_library_btn = pyxbmct.Button('Synchronize Kodi video library')
+        self._sync_library_btn = pyxbmct.Button(ui_string(32001))
         self.placeControl(self._sync_library_btn, 1, 0, columnspan=2)
         self._sync_new_btn = pyxbmct.Button('Synchronize new video items')
         self.placeControl(self._sync_new_btn, 0, 0, columnspan=2)

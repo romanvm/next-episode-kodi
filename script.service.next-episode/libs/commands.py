@@ -11,7 +11,7 @@ from medialibrary import (get_movies, get_tvshows, get_episodes, get_recent_movi
                           get_recent_episodes, get_tvdb_id, NoDataError)
 from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data,
                          get_password_hash, LoginError, DataUpdateError)
-from gui import NextEpDialog
+from gui import NextEpDialog, ui_string
 
 addon = Addon('script.service.next-episode')
 dialog = Dialog()
@@ -29,17 +29,17 @@ class LoginDialog(NextEpDialog):
         self.is_cancelled = True
 
     def _set_controls(self):
-        login_label = pyxbmct.Label('Username:')
+        login_label = pyxbmct.Label(ui_string(32003))
         self.placeControl(login_label, 0, 0)
-        password_label = pyxbmct.Label('Password:')
+        password_label = pyxbmct.Label(ui_string(32004))
         self.placeControl(password_label, 1, 0)
         self._username_field = pyxbmct.Edit('')
         self.placeControl(self._username_field, 0, 1)
         self._password_field = pyxbmct.Edit('', isPassword=True)
         self.placeControl(self._password_field, 1, 1)
-        self._ok_btn = pyxbmct.Button('OK')
+        self._ok_btn = pyxbmct.Button(ui_string(32004))
         self.placeControl(self._ok_btn, 2, 1)
-        self._cancel_btn = pyxbmct.Button('Cancel')
+        self._cancel_btn = pyxbmct.Button(ui_string(32006))
         self.placeControl(self._cancel_btn, 2, 0)
 
     def _set_connections(self):
@@ -79,10 +79,10 @@ def send_data(data):
         update_data(data)
     except LoginError:
         xbmc.log('next-episode.net: login failed! Re-enter your username and password.', xbmc.LOGERROR)
-        dialog.notification('next-episode.net', 'Login failed!', icon='error')
+        dialog.notification('next-episode.net', ui_string(32007), icon='error')
     except DataUpdateError as ex:
         xbmc.log('next-episodes.net: {0}'.format(ex), xbmc.LOGERROR)
-        dialog.notification('next-episode.net', 'Data update error. See log for more details.', icon='error')
+        dialog.notification('next-episode.net', ui_string(32008), icon='error')
     else:
         dialog.notification('next-episode.net', 'Data updated', time=2000, sound=False)
 
@@ -180,7 +180,7 @@ def login():
     :return: ``True`` on successful login, ``False`` if login is failed or cancelled
     :rtype: bool
     """
-    login_dialog = LoginDialog('Login to next-episode.net', username=addon.getSetting('username'))
+    login_dialog = LoginDialog(ui_string(32009), username=addon.getSetting('username'))
     login_dialog.doModal()
     result = False
     if not login_dialog.is_cancelled:
@@ -190,13 +190,13 @@ def login():
         try:
             hash_ = get_password_hash(username, password)
         except LoginError:
-            dialog.ok('next-episode.net', 'Login error!', 'Check login/password and try again.')
+            dialog.ok('next-episode.net', ui_string(32007), ui_string(32010))
             xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
         else:
             addon.setSetting('username', username)
             addon.setSetting('hash', hash_)
             xbmc.log('next-episode.net: successful login', xbmc.LOGNOTICE)
-            dialog.notification('next-episode.net', 'Successful login', time=3000, sound=False)
+            dialog.notification('next-episode.net', ui_string(32011), time=3000, sound=False)
             result = True
         xbmc.executebuiltin('Dialog.Close(10138)')
     del login_dialog

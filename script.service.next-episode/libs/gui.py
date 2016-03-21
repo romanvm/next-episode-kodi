@@ -3,8 +3,23 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 
 from abc import ABCMeta, abstractmethod
+from xbmcaddon import Addon
 from xbmcgui import ACTION_NAV_BACK
 import pyxbmct
+
+addon = Addon()
+
+
+def ui_string(id_):
+    """
+    Get localized UI string
+
+    :param id_: string ID
+    :type id_: int
+    :return: localized string
+    :rtype: unicode
+    """
+    return addon.getLocalizedString(id_).encode('utf-8')
 
 
 class NextEpDialog(pyxbmct.AddonDialogWindow):

@@ -5,6 +5,7 @@
 import xbmc
 from xbmcgui import Dialog
 from commands import sync_library, sync_new_items, login, addon
+from gui import ui_string
 # Here ``addon`` is imported from another module to prevent a bug
 # when username and hash are not stored in the addon settings.
 
@@ -27,12 +28,12 @@ def initial_prompt():
     """
     if (addon.getSetting('prompt_shown') != 'true' and
             not addon.getSetting('username') and
-            dialog.yesno('Login required!',
-                         'You need to login to next-episode.net',
-                         'to synchronize your video library data.',
-                         'Login now?')):
-        if login() and dialog.yesno('Library synchronization',
-                                    'You need to synchronize your video library with next-episode.net.',
-                                    'Synchronize now?'):
+            dialog.yesno(ui_string(32012),
+                         ui_string(32013),
+                         ui_string(32014),
+                         ui_string(32015))):
+        if login() and dialog.yesno(ui_string(32016),
+                                    ui_string(32017),
+                                    ui_string(32018)):
             sync_library()
         addon.setSetting('prompt_shown', 'true')
