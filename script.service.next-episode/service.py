@@ -23,5 +23,5 @@ while not xbmc.abortRequested:
     if not service_started:
         xbmc.log('next-episode.net: service started', xbmc.LOGNOTICE)
         service_started = True
-    xbmc.sleep(200)
+    xbmc.sleep(500)
 xbmc.log('next-episode.net: service stopped', xbmc.LOGNOTICE)
