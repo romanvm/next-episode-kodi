@@ -76,9 +76,25 @@ msgid "Library synchronization"
 msgstr ""
 
 msgctxt "#32017"
-msgid "Library synchronization"
+msgid "You need to synchronize your video library data."
 msgstr ""
 
 msgctxt "#32018"
 msgid "Synchronize now?"
+msgstr ""
+
+msgctxt "#32019"
+msgid "Disable notification dialogs for update errors"
+msgstr ""
+
+msgctxt "#32020"
+msgid "Data update error!"
+msgstr ""
+
+msgctxt "#32021"
+msgid "Failed movies: {0}"
+msgstr ""
+
+msgctxt "#32022"
+msgid "Failed TV shows: {0}"
 msgstr ""

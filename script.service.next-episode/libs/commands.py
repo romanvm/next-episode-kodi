@@ -81,8 +81,14 @@ def send_data(data):
         xbmc.log('next-episode.net: login failed! Re-enter your username and password.', xbmc.LOGERROR)
         dialog.notification('next-episode.net', ui_string(32007), icon='error')
     except DataUpdateError as ex:
-        xbmc.log('next-episodes.net: {0}'.format(ex), xbmc.LOGERROR)
-        dialog.notification('next-episode.net', ui_string(32008), icon='error')
+        xbmc.log('next-episode.net: {0}'.format(ex), xbmc.LOGERROR)
+        if addon.getSetting('disable_error_dialogs') != 'true':
+            dialog.ok('next-epsisode.net',
+                      ui_string(32020),
+                      ui_string(32021).format(ex.failed_movies),
+                      ui_string(32022).format(ex.failed_shows))
+        else:
+            dialog.notification('next-episode.net', ui_string(32008), icon='error')
     else:
         dialog.notification('next-episode.net', 'Data updated', time=2000, sound=False)
 
