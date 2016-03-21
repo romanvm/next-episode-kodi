@@ -38,9 +38,13 @@ def get_movies():
     :return: the list of movie data as Python dicts like this:
         ``{u'imdbnumber': u'tt1267297', u'playcount': 0, u'movieid': 2, u'label': u'Hercules'}``
     :rtype: list
+    :raises: NoDataError if the Kodi library has no movies
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return send_json_rpc('VideoLibrary.GetMovies', params)['movies']
+    result = send_json_rpc('VideoLibrary.GetMovies', params)
+    if not result.get('movies'):
+        raise NoDataError
+    return result['movies']
 
 
 def get_tvshows():
@@ -50,9 +54,13 @@ def get_tvshows():
     :return: the list of TV show data as Python dicts like this:
         {u'imdbnumber': u'247897', u'tvshowid': 3, u'label': u'Homeland'}
     :rtype: list
+    :raises: NoDataError if the Kodi library has no TV shows
     """
     params = {'properties': ['imdbnumber'], 'sort': {'order': 'ascending', 'method': 'label'}}
-    return send_json_rpc('VideoLibrary.GetTVShows', params)['tvshows']
+    result = send_json_rpc('VideoLibrary.GetTVShows', params)
+    if not result.get('tvshows'):
+        raise NoDataError
+    return result['tvshows']
 
 
 def get_episodes(tvshowid):
@@ -92,9 +100,13 @@ def get_recent_movies():
 
     :return: the list of recent movies
     :rtype: list
+    :raises: NoDataError if the Kodi library has no recent movies.
     """
     params = {'properties': ['imdbnumber', 'playcount']}
-    return send_json_rpc('VideoLibrary.GetRecentlyAddedMovies', params)['movies']
+    result = send_json_rpc('VideoLibrary.GetRecentlyAddedMovies', params)
+    if not result.get('movies'):
+        raise NoDataError
+    return result['movies']
 
 
 def get_recent_episodes():
@@ -103,9 +115,13 @@ def get_recent_episodes():
 
     :return: the list of recent episodes
     :rtype: list
+    :raises: NoDataError if the Kodi library has no recent episodes
     """
     params = {'properties': ['playcount', 'tvshowid', 'season', 'episode']}
-    return send_json_rpc('VideoLibrary.GetRecentlyAddedEpisodes', params)['episodes']
+    result = send_json_rpc('VideoLibrary.GetRecentlyAddedEpisodes', params)
+    if not result.get('episodes'):
+        raise NoDataError
+    return result['episodes']
 
 
 def get_now_played():

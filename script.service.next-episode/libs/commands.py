@@ -92,22 +92,32 @@ def sync_library():
     Synchronize Kodi video library with next-episode.net
     """
     xbmc.executebuiltin('ActivateWindow(10138)')  # Busy dialog on
-    episodes = []
-    for show in get_tvshows():
-        try:
-            episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
-        except NoDataError:
-            continue
     data = {
-        'user': {
-            'username': addon.getSetting('username'),
-            'hash': addon.getSetting('hash')
-        },
-        'movies': prepare_movies_list(get_movies()),
-        'tvshows': episodes
-    }
-    xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-    send_data(data)
+    'user': {
+        'username': addon.getSetting('username'),
+        'hash': addon.getSetting('hash')
+    }}
+    try:
+        data['movies'] = prepare_movies_list(get_movies())
+    except NoDataError:
+        pass
+    try:
+        tvshows = get_tvshows()
+    except NoDataError:
+        pass
+    else:
+        episodes = []
+        for show in tvshows:
+            try:
+                episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+            except NoDataError:
+                continue
+        data['tvshows'] == episodes
+    if 'movies' in data or 'tvshows' in data:
+        xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+        send_data(data)
+    else:
+        xbmc.log('next-episode: Kodi video library has no movies and TV episodes.', xbmc.LOGWARNING)
     xbmc.executebuiltin('Dialog.Close(10138)')  # Busy dialog off
 
 
@@ -119,12 +129,20 @@ def sync_new_items():
         'user': {
             'username': addon.getSetting('username'),
             'hash': addon.getSetting('hash')
-        },
-        'movies': prepare_movies_list(get_recent_movies()),
-        'tvshows': prepare_episodes_list(get_recent_episodes())
-    }
-    xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
-    send_data(data)
+        }}
+    try:
+        data['movies'] = prepare_movies_list(get_recent_movies())
+    except NoDataError:
+        pass
+    try:
+        data['tvshows'] = prepare_episodes_list(get_recent_episodes())
+    except NoDataError:
+        pass
+    if 'movies' in data or 'episodes' in data:
+        xbmc.log('next-episode.net: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+        send_data(data)
+    else:
+        xbmc.log('next-episode.net: Kodi video library has no recent movies and episodes.', xbmc.LOGWARNING)
 
 
 def update_single_item(item):
