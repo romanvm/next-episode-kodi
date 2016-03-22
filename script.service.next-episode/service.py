@@ -15,6 +15,7 @@ while not xbmc.abortRequested:
     if xbmc.getCondVisibility('Player.HasVideo') and now_played is None:
         now_played = get_now_played()
     elif not xbmc.getCondVisibility('Player.HasVideo') and now_played is not None:
+        xbmc.sleep(1000)  # Wait for Kodi to stop player and to update item's status
         if (now_played['type'] in ('movie', 'episode') and
                     now_played['playcount'] == 0 and
                     get_playcount(now_played['id'], now_played['type']) > 0):
