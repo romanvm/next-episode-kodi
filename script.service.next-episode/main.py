@@ -16,7 +16,7 @@ class MainDialog(NextEpDialog):
         self.placeControl(self._enter_login_btn, 2, 0, columnspan=2)
         self._sync_library_btn = pyxbmct.Button(ui_string(32002))
         self.placeControl(self._sync_library_btn, 1, 0, columnspan=2)
-        self._sync_new_btn = pyxbmct.Button('Synchronize new video items')
+        self._sync_new_btn = pyxbmct.Button('Send new video items data')
         self.placeControl(self._sync_new_btn, 0, 0, columnspan=2)
 
     def _set_connections(self):

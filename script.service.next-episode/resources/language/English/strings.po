@@ -16,7 +16,7 @@ msgid "Login to next-episode.net"
 msgstr ""
 
 msgctxt "#32002"
-msgid "Synchronize Kodi video library with next-episode.net"
+msgid "Send video library data to next-episode.net"
 msgstr ""
 
 msgctxt "#32003"
