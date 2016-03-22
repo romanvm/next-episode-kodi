@@ -19,6 +19,7 @@ while not xbmc.abortRequested:
         if (now_played['type'] in ('movie', 'episode') and
                     now_played['playcount'] == 0 and
                     get_playcount(now_played['id'], now_played['type']) > 0):
+            now_played['playcount'] = 1
             update_single_item(now_played)
         now_played = None
     if not service_started:
