@@ -7,7 +7,7 @@ from xbmcaddon import Addon
 from xbmcgui import ACTION_NAV_BACK
 import pyxbmct
 
-addon = Addon()
+addon = Addon('script.service.next-episode')
 
 
 def ui_string(id_):
