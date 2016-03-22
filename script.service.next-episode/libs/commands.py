@@ -118,7 +118,7 @@ def sync_library():
                 episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
             except NoDataError:
                 continue
-        data['tvshows'] == episodes
+        data['tvshows'] = episodes
     if 'movies' in data or 'tvshows' in data:
         xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
         send_data(data)
