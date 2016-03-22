@@ -37,7 +37,7 @@ class LoginDialog(NextEpDialog):
         self.placeControl(self._username_field, 0, 1)
         self._password_field = pyxbmct.Edit('', isPassword=True)
         self.placeControl(self._password_field, 1, 1)
-        self._ok_btn = pyxbmct.Button(ui_string(32004))
+        self._ok_btn = pyxbmct.Button(ui_string(32005))
         self.placeControl(self._ok_btn, 2, 1)
         self._cancel_btn = pyxbmct.Button(ui_string(32006))
         self.placeControl(self._cancel_btn, 2, 0)
