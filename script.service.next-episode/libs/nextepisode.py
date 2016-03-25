@@ -4,8 +4,8 @@
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 import json
-import urllib2
-from contextlib import closing
+from copy import deepcopy
+from requests import post
 import xbmc
 from medialibrary import get_tvdb_id
 
@@ -61,16 +61,16 @@ def web_client(url, data=None):
     :type url: str
     :param data: data to be sent in a POST request
     :type data: dict
-    :return. website response content
-    :rtype: str
+    :return. website JSON response
+    :rtype: dict
     """
-    if data is not None:
-        data = json.dumps(data)
-    request = urllib2.Request(url, data, headers={'Content-Type': 'application/json'})
-    with closing(urllib2.urlopen(request)) as response:
-        result = response.read()
-        xbmc.log('next-episode reply:\n{0}'.format(result), xbmc.LOGNOTICE)
-        return result
+    reply = post(url, json=data, verify=False)
+    result = json.loads(reply.text)
+    logged_data = deepcopy(result)
+    if 'hash' in logged_data:
+        logged_data['hash'] = '*****'
+    xbmc.log('next-episode reply:\n{0}'.format(logged_data), xbmc.LOGNOTICE)
+    return result
 
 
 def update_data(data):
@@ -84,7 +84,7 @@ def update_data(data):
     :raises: LoginError if authentication failed
     :raises: DataUpdateError if movies or episodes fail to update.
     """
-    response = json.loads(web_client(UPDATE_DATA, data))
+    response = web_client(UPDATE_DATA, data)
     if 'error' in response and response['error']['code'] == '3':
         raise LoginError
     else:
@@ -111,7 +111,7 @@ def get_password_hash(username, password):
     :rtype: str
     :raises: LoginError if login fails
     """
-    response = json.loads(web_client(LOGIN, {'username': username, 'password': password}))
+    response = web_client(LOGIN, {'username': username, 'password': password})
     if 'error' in response:
         raise LoginError
     return response['hash']

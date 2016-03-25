@@ -4,6 +4,7 @@
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 import sys
+from copy import deepcopy
 import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
@@ -94,6 +95,18 @@ def send_data(data):
         dialog.notification('next-episode.net', 'Data updated', time=2000, sound=False)
 
 
+def log_data_sent(data):
+    """
+    Log data sent to next-episode.net with sanitized username/hash
+
+    :param data: data to be sent
+    :type data: dict
+    """
+    logged_data = deepcopy(data)
+    logged_data['user']['username'] = logged_data['user']['hash'] = '*****'
+    xbmc.log('next-episode: data sent:\n{0}'.format(logged_data), xbmc.LOGNOTICE)
+
+
 def sync_library():
     """
     Synchronize Kodi video library with next-episode.net
@@ -121,7 +134,7 @@ def sync_library():
                 continue
         data['tvshows'] = episodes
     if 'movies' in data or 'tvshows' in data:
-        xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+        log_data_sent(data)
         send_data(data)
     else:
         xbmc.log('next-episode: Kodi video library has no movies and TV episodes.', xbmc.LOGWARNING)
@@ -146,7 +159,7 @@ def sync_new_items():
     except NoDataError:
         pass
     if 'movies' in data or 'episodes' in data:
-        xbmc.log('next-episode.net: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+        log_data_sent(data)
         send_data(data)
     else:
         xbmc.log('next-episode.net: Kodi video library has no recent movies and episodes.', xbmc.LOGWARNING)
@@ -176,7 +189,7 @@ def update_single_item(item):
             'imdb_id': item['imdbnumber'],
             'watched': '1' if item['playcount'] else '0'
         }]
-    xbmc.log('next-episode: data sent:\n{0}'.format(data), xbmc.LOGNOTICE)
+    log_data_sent(data)
     send_data(data)
 
 
