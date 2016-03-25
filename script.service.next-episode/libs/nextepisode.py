@@ -18,12 +18,39 @@ class LoginError(Exception):
 
 
 class DataUpdateError(Exception):
+    """
+    Exception that carries information about movies and/or TV shows
+    that failed update to next-episode.net
+    """
     def __init__(self, failed_movies=None, failed_shows=None):
-        self.failed_movies = failed_movies
-        self.failed_shows = failed_shows
+        self._failed_movies = failed_movies
+        self._failed_shows = failed_shows
+
+    @property
+    def failed_movies(self):
+        """
+        :return: Comma-separated list of movie IDs that failed update
+        :rtype: str
+        """
+        if self._failed_movies is not None:
+            return ', '.join(self._failed_movies)
+        else:
+            return 'none'
+
+    @property
+    def failed_shows(self):
+        """
+        :return: Comma-separated list of TV show IDs that failed update
+        :rtype: str
+        """
+        if self._failed_shows is not None:
+            return ', '.join(self._failed_shows)
+        else:
+            return 'none'
 
     def __str__(self):
-        return 'Data update error! Failed movies: {0}. Failed shows: {1}'.format(self.failed_movies, self.failed_shows)
+        return 'Data update error! Failed movies: {0}. Failed TV shows: {1}'.format(self.failed_movies,
+                                                                                    self.failed_shows)
 
 
 def web_client(url, data=None):
@@ -65,7 +92,7 @@ def update_data(data):
         failed_shows = None
         if 'movies' in response and response['movies'].get('error'):
             failed_movies = response['movies']['error']['message']
-        if 'episodes' in response and response['tv_shows'].get('error'):
+        if 'tv_shows' in response and response['tv_shows'].get('error'):
             failed_shows = response['tv_shows']['error']['message']
         if failed_movies is not None or failed_shows is not None:
             raise DataUpdateError(failed_movies, failed_shows)
