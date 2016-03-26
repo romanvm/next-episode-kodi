@@ -3,6 +3,7 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
+import os
 import sys
 from copy import deepcopy
 import xbmc
@@ -16,6 +17,7 @@ from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data
 from gui import NextEpDialog, ui_string
 
 addon = Addon('script.service.next-episode')
+icon = os.path.join(addon.getAddonInfo('path'), 'icon.png')
 dialog = Dialog()
 
 
@@ -92,7 +94,7 @@ def send_data(data):
         else:
             dialog.notification('next-episode.net', ui_string(32008), icon='error')
     else:
-        dialog.notification('next-episode.net', 'Data updated', time=2000, sound=False)
+        dialog.notification('next-episode.net', 'Data updated', icon=icon, time=2000, sound=False)
 
 
 def log_data_sent(data):
