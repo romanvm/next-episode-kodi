@@ -2,7 +2,7 @@
 <addon id="script.service.next-episode"
    name="next-episode.net"
    version="0.9.990"
-   provider-name="Roman V.M.">
+   provider-name="next-episode.net">
   <requires>
     <import addon="xbmc.python" version="2.19.0" />
     <import addon="script.module.pyxbmct" version="1.1.0" />
@@ -14,8 +14,10 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
-    <summary lang="en">next-episode.net service</summary>
-    <description lang="en">next-episode.net service for Kodi.</description>
+    <summary lang="en">The next-episode.net service for Kodi.</summary>
+    <description lang="en">The next-episode.net service for Kodi allows to add your movies and TV episodes to your inventory
+      on next-episode.net. The service also monitors video playback and updates 'watched' status of your
+      movies and episodes on next-episode.net.</description>
     <license>GNU GPL v.3</license>
     <forum></forum>
     <website>http://next-episode.net/</website>
