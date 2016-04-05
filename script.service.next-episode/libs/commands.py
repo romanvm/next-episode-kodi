@@ -26,7 +26,7 @@ class LoginDialog(NextEpDialog):
     Enter login/password dialog
     """
     def __init__(self, title='', username=''):
-        super(LoginDialog, self).__init__(title)
+        super(LoginDialog, self).__init__(450, 210, 3, 2, title)
         self.username = username
         self._username_field.setText(username)
         self.password = ''

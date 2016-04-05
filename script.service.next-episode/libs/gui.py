@@ -29,9 +29,9 @@ class NextEpDialog(pyxbmct.AddonDialogWindow):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, title=''):
+    def __init__(self, width, height, rows, columns, title=''):
         super(NextEpDialog, self).__init__(title)
-        self.setGeometry(450, 210, 3, 2)
+        self.setGeometry(width, height, rows, columns)
         self._set_controls()
         self._set_connections()
         self._set_navigation()
