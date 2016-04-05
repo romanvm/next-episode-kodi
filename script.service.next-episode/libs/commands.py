@@ -94,7 +94,7 @@ def send_data(data):
         else:
             dialog.notification('next-episode.net', ui_string(32008), icon='error')
     else:
-        dialog.notification('next-episode.net', 'Data updated', icon=icon, time=2000, sound=False)
+        dialog.notification('next-episode.net', ui_string(32009), icon=icon, time=2000, sound=False)
 
 
 def log_data_sent(data):
@@ -202,7 +202,7 @@ def login():
     :return: ``True`` on successful login, ``False`` if login is failed or cancelled
     :rtype: bool
     """
-    login_dialog = LoginDialog(ui_string(32009), username=addon.getSetting('username'))
+    login_dialog = LoginDialog(ui_string(32001), username=addon.getSetting('username'))
     login_dialog.doModal()
     result = False
     if not login_dialog.is_cancelled:
@@ -228,7 +228,5 @@ def login():
 if __name__ == '__main__':
     if sys.argv[1] == 'sync_library':
         sync_library()
-    elif sys.argv[1] == 'sync_new_items':
-        sync_new_items()
     elif sys.argv[1] == 'login':
         login()

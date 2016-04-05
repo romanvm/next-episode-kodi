@@ -8,9 +8,6 @@
     <setting type="action"
              label="32002"
              action="RunScript($CWD/libs/commands.py,sync_library)" />
-    <setting type="action"
-             label="Send new video items data to next-episode.net"
-             action="RunScript($CWD/libs/commands.py,sync_new_items)" />
     <setting label="Prompt" type="bool" id="prompt_shown" default="false" visible="false" />
   </category>
 </settings>

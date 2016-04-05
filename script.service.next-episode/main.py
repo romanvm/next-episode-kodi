@@ -37,6 +37,6 @@ class MainDialog(NextEpDialog):
 
 
 if __name__ == '__main__':
-    main_dialog = MainDialog(450, 160, 2, 1, 'next-episode.net')
+    main_dialog = MainDialog(520, 160, 2, 1, 'next-episode.net')
     main_dialog.doModal()
     del main_dialog
