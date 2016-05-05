@@ -1,4 +1,4 @@
 1.1.0:
-  - Uses xbmc.Monitor for monitoring single item updates.
+  - Now the addon monitors both automatic and manual "watched" status updates.
 1.0.0:
   - Initial public release.

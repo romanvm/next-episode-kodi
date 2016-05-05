@@ -9,7 +9,7 @@ from libs.monitoring import UpdateMonitor, initial_prompt
 initial_prompt()
 update_monitor = UpdateMonitor()
 service_started = False
-while not xbmc.abortRequested:
+while not update_monitor.abortRequested():
     if not service_started:
         xbmc.log('next-episode.net: service started', xbmc.LOGNOTICE)
         service_started = True
