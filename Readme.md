@@ -5,10 +5,7 @@ The addon for [Kodi](https://kodi.tv/) mediacenter that uploads your video libra
 
 ## Installation
 
-1. Download a .zip distribution from "Releases" tab of this repository.
-2. In Kodi select **System** > **Add-ons** > **Install from zip file**.
-
-**Warning!** The addon is still in beta version so bugs may be possible.
+The plugin is available in the Kodi official addon repository in "Services" section.
 
 ## Usage
 
