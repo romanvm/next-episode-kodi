@@ -25,7 +25,7 @@ added to the video library, for example videos from various video plugins.
 
 ## Bug Reports
 
-Please submit bug reports though this repository issue tracker or
+Please submit bug reports through this repository issue tracker or
 [next-episode.net forum](http://forum.next-episode.net/viewtopic.php?id=9090).
 When submitting bug repors, [Kodi debug log](http://kodi.wiki/view/Log_file/Easy) **is mandatory**.
 Bug reports without logs will be ignored.
