@@ -81,8 +81,8 @@ def update_data(data):
     :type data: dict
     :return: next-episode.net response
     :rtype: dict
-    :raises: LoginError if authentication failed
-    :raises: DataUpdateError if movies or episodes fail to update.
+    :raises LoginError: if authentication failed
+    :raises DataUpdateError: if movies or episodes fail to update.
     """
     response = web_client(UPDATE_DATA, data)
     if 'error' in response and response['error']['code'] == '3':
@@ -109,7 +109,7 @@ def get_password_hash(username, password):
     :type password: str
     :return: password hash
     :rtype: str
-    :raises: LoginError if login fails
+    :raises LoginError: if login fails
     """
     response = web_client(LOGIN, {'username': username, 'password': password})
     if 'error' in response:

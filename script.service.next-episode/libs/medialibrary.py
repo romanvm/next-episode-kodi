@@ -39,7 +39,7 @@ def get_movies():
     :return: the list of movie data as Python dicts like this:
         ``{u'imdbnumber': u'tt1267297', u'playcount': 0, u'movieid': 2, u'label': u'Hercules'}``
     :rtype: list
-    :raises: NoDataError if the Kodi library has no movies
+    :raises NoDataError: if the Kodi library has no movies
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
     result = send_json_rpc('VideoLibrary.GetMovies', params)
@@ -55,7 +55,7 @@ def get_tvshows():
     :return: the list of TV show data as Python dicts like this:
         {u'imdbnumber': u'247897', u'tvshowid': 3, u'label': u'Homeland'}
     :rtype: list
-    :raises: NoDataError if the Kodi library has no TV shows
+    :raises NoDataError: if the Kodi library has no TV shows
     """
     params = {'properties': ['imdbnumber'], 'sort': {'order': 'ascending', 'method': 'label'}}
     result = send_json_rpc('VideoLibrary.GetTVShows', params)
@@ -73,7 +73,7 @@ def get_episodes(tvshowid):
     :return: the liso of episode data as Python dicts like this:
         ``{u'season': 4, u'playcount': 0, u'episode': 1, u'episodeid': 5, u'label': u'4x01. The Drone Queen'}``
     :rtype: list
-    :raises: NoDataError if a TV show has no episodes.
+    :raises NoDataError: if a TV show has no episodes.
     """
     params = {'tvshowid': tvshowid, 'properties': ['season', 'episode', 'playcount', 'tvshowid']}
     result = send_json_rpc('VideoLibrary.GetEpisodes', params)
@@ -101,7 +101,7 @@ def get_recent_movies():
 
     :return: the list of recent movies
     :rtype: list
-    :raises: NoDataError if the Kodi library has no recent movies.
+    :raises NoDataError: if the Kodi library has no recent movies.
     """
     params = {'properties': ['imdbnumber', 'playcount']}
     result = send_json_rpc('VideoLibrary.GetRecentlyAddedMovies', params)
@@ -116,7 +116,7 @@ def get_recent_episodes():
 
     :return: the list of recent episodes
     :rtype: list
-    :raises: NoDataError if the Kodi library has no recent episodes
+    :raises NoDataError: if the Kodi library has no recent episodes
     """
     params = {'properties': ['playcount', 'tvshowid', 'season', 'episode']}
     result = send_json_rpc('VideoLibrary.GetRecentlyAddedEpisodes', params)

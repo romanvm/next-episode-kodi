@@ -18,7 +18,7 @@ def ui_string(id_):
     :param id_: string ID
     :type id_: int
     :return: localized string
-    :rtype: unicode
+    :rtype: str
     """
     return addon.getLocalizedString(id_).encode('utf-8')
 
