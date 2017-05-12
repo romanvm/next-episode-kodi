@@ -125,34 +125,6 @@ def get_recent_episodes():
     return result['episodes']
 
 
-def get_now_played():
-    """
-    Get nov played item
-
-    :return: now played item's data
-    :rtype: dict
-
-    Example movie::
-
-        {u'tvshowid': -1, u'episode': -1, u'season': -1,
-            u'label': u'12 Years a Slave', u'imdbnumber': u'tt2024544',
-            u'playcount': 0, u'type': u'movie', u'id': 1}
-
-    Example episode::
-
-        {u'tvshowid': 1, u'episode': 11, u'season': 4,
-            u'label': u'The Path of Destruction', u'imdbnumber': u'',
-            u'playcount': 0, u'type': u'episode', u'id': 1}
-    """
-    playerid = -1
-    for player in send_json_rpc('Player.GetActivePlayers'):
-        if player['type'] == 'video':
-            playerid = player['playerid']
-            break
-    params = {'playerid': playerid, 'properties': ['playcount', 'imdbnumber', 'season', 'episode', 'tvshowid']}
-    return send_json_rpc('Player.GetItem', params)['item']
-
-
 def get_item_details(id_, type):
     """
     Get video item details
