@@ -22,7 +22,7 @@ class UpdateMonitor(xbmc.Monitor):
     def onScanFinished(self, library):
         if library == 'video':
             sync_new_items()
-            xbmc.log('next-episode.net: new items updated', xbmc.LOGNOTICE)
+            xbmc.log('next-episode.net: new items updated', xbmc.LOGDEBUG)
 
     def onNotification(self, sender, method, data):
         """

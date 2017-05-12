@@ -69,7 +69,7 @@ def web_client(url, data=None):
     logged_data = deepcopy(result)
     if 'hash' in logged_data:
         logged_data['hash'] = '*****'
-    xbmc.log('next-episode reply:\n{0}'.format(logged_data), xbmc.LOGNOTICE)
+    xbmc.log('next-episode reply:\n{0}'.format(logged_data), xbmc.LOGDEBUG)
     return result
 
 

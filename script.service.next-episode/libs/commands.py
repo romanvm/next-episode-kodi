@@ -217,7 +217,7 @@ def login():
         else:
             addon.setSetting('username', username)
             addon.setSetting('hash', hash_)
-            xbmc.log('next-episode.net: successful login', xbmc.LOGNOTICE)
+            xbmc.log('next-episode.net: successful login', xbmc.LOGDEBUG)
             dialog.notification('next-episode.net', ui_string(32011), time=3000, sound=False)
             result = True
         xbmc.executebuiltin('Dialog.Close(10138)')

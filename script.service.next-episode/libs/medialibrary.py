@@ -26,9 +26,9 @@ def send_json_rpc(method, params=None):
     if params is not None:
         request['params'] = params
     json_request = json.dumps(request)
-    xbmc.log('next-episode-net: JSON-RPC request: {0}'.format(json_request), xbmc.LOGNOTICE)
+    xbmc.log('next-episode-net: JSON-RPC request: {0}'.format(json_request), xbmc.LOGDEBUG)
     json_reply = xbmc.executeJSONRPC(json_request)
-    xbmc.log('next-episode-net: JSON-RPC reply: {0}'.format(json_reply), xbmc.LOGNOTICE)
+    xbmc.log('next-episode-net: JSON-RPC reply: {0}'.format(json_reply), xbmc.LOGDEBUG)
     return json.loads(json_reply)['result']
 
 
