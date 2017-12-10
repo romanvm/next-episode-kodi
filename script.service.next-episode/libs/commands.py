@@ -193,9 +193,12 @@ def update_single_item(item):
             }]
     elif item['type'] == 'movie':
         data['movies'] = [{
-            'imdb_id': item['imdbnumber'],
             'watched': '1' if item['playcount'] else '0'
         }]
+        if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+            data['imdb_id'] = item['uniqueid']['imdb']
+        else:
+            data['imdb_id'] = item['imdbnumber']
     log_data_sent(data)
     send_data(data)
 
