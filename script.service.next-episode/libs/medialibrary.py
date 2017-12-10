@@ -42,6 +42,8 @@ def get_movies():
     :raises NoDataError: if the Kodi library has no movies
     """
     params = {'properties': ['imdbnumber', 'playcount'], 'sort': {'order': 'ascending', 'method': 'label'}}
+    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+        params['properties'].append('uniqueid')
     result = send_json_rpc('VideoLibrary.GetMovies', params)
     if not result.get('movies'):
         raise NoDataError

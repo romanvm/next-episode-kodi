@@ -128,7 +128,10 @@ def prepare_movies_list(raw_movies):
     """
     listing = []
     for movie in raw_movies:
-        imdb_id = movie['imdbnumber']
+        if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+            imdb_id = movie['uniqueid']['imdb']
+        else:
+            imdb_id = movie['imdbnumber']
         watched = '1' if movie['playcount'] else '0'
         listing.append({'imdb_id': imdb_id, 'watched': watched})
     return listing
