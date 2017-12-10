@@ -14,7 +14,7 @@ from medialibrary import (get_movies, get_tvshows, get_episodes, get_recent_movi
                           get_recent_episodes, get_tvdb_id, NoDataError)
 from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data,
                          get_password_hash, LoginError, DataUpdateError)
-from gui import NextEpDialog, ui_string
+from gui import NextEpDialog, ui_string, busy_spinner
 
 addon = Addon('script.service.next-episode')
 icon = os.path.join(addon.getAddonInfo('path'), 'icon.png')
@@ -56,8 +56,10 @@ class LoginDialog(NextEpDialog):
         self._username_field.controlDown(self._password_field)
         self._password_field.controlUp(self._username_field)
         self._password_field.controlDown(self._ok_btn)
-        self._ok_btn.setNavigation(self._password_field, self._username_field, self._cancel_btn, self._cancel_btn)
-        self._cancel_btn.setNavigation(self._password_field, self._username_field, self._ok_btn, self._ok_btn)
+        self._ok_btn.setNavigation(self._password_field, self._username_field,
+                                   self._cancel_btn, self._cancel_btn)
+        self._cancel_btn.setNavigation(self._password_field, self._username_field,
+                                       self._ok_btn, self._ok_btn)
         self.setFocus(self._username_field)
 
     def _ok(self):
@@ -82,7 +84,8 @@ def send_data(data):
     try:
         update_data(data)
     except LoginError:
-        xbmc.log('next-episode.net: login failed! Re-enter your username and password.', xbmc.LOGERROR)
+        xbmc.log('next-episode.net: login failed! Re-enter your username and password.',
+                 xbmc.LOGERROR)
         dialog.notification('next-episode.net', ui_string(32007), icon='error')
     except DataUpdateError as ex:
         xbmc.log('next-episode.net: {0}'.format(ex), xbmc.LOGERROR)
@@ -94,7 +97,8 @@ def send_data(data):
         else:
             dialog.notification('next-episode.net', ui_string(32008), icon='error')
     else:
-        dialog.notification('next-episode.net', ui_string(32009), icon=icon, time=2000, sound=False)
+        dialog.notification('next-episode.net', ui_string(32009), icon=icon, time=2000,
+                            sound=False)
 
 
 def log_data_sent(data):
@@ -113,34 +117,34 @@ def sync_library():
     """
     Synchronize Kodi video library with next-episode.net
     """
-    xbmc.executebuiltin('ActivateWindow(10138)')  # Busy dialog on
-    data = {
-    'user': {
-        'username': addon.getSetting('username'),
-        'hash': addon.getSetting('hash')
-    }}
-    try:
-        data['movies'] = prepare_movies_list(get_movies())
-    except NoDataError:
-        pass
-    try:
-        tvshows = get_tvshows()
-    except NoDataError:
-        pass
-    else:
-        episodes = []
-        for show in tvshows:
-            try:
-                episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
-            except NoDataError:
-                continue
-        data['tvshows'] = episodes
-    if 'movies' in data or 'tvshows' in data:
-        log_data_sent(data)
-        send_data(data)
-    else:
-        xbmc.log('next-episode: Kodi video library has no movies and TV episodes.', xbmc.LOGWARNING)
-    xbmc.executebuiltin('Dialog.Close(10138)')  # Busy dialog off
+    with busy_spinner():
+        data = {
+        'user': {
+            'username': addon.getSetting('username'),
+            'hash': addon.getSetting('hash')
+        }}
+        try:
+            data['movies'] = prepare_movies_list(get_movies())
+        except NoDataError:
+            pass
+        try:
+            tvshows = get_tvshows()
+        except NoDataError:
+            pass
+        else:
+            episodes = []
+            for show in tvshows:
+                try:
+                    episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+                except NoDataError:
+                    continue
+            data['tvshows'] = episodes
+        if 'movies' in data or 'tvshows' in data:
+            log_data_sent(data)
+            send_data(data)
+        else:
+            xbmc.log('next-episode: Kodi video library has no movies and TV episodes.',
+                     xbmc.LOGWARNING)
 
 
 def sync_new_items():
@@ -164,7 +168,8 @@ def sync_new_items():
         log_data_sent(data)
         send_data(data)
     else:
-        xbmc.log('next-episode.net: Kodi video library has no recent movies and episodes.', xbmc.LOGWARNING)
+        xbmc.log('next-episode.net: Kodi video library has no recent movies and episodes.',
+                 xbmc.LOGWARNING)
 
 
 def update_single_item(item):
@@ -218,7 +223,8 @@ def login():
             addon.setSetting('username', username)
             addon.setSetting('hash', hash_)
             xbmc.log('next-episode.net: successful login', xbmc.LOGDEBUG)
-            dialog.notification('next-episode.net', ui_string(32011), time=3000, sound=False)
+            dialog.notification('next-episode.net', ui_string(32011), time=3000,
+                                sound=False)
             result = True
         xbmc.executebuiltin('Dialog.Close(10138)')
     del login_dialog

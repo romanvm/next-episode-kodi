@@ -4,6 +4,8 @@
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 from abc import ABCMeta, abstractmethod
+from contextlib import contextmanager
+from xbmc import executebuiltin
 from xbmcaddon import Addon
 from xbmcgui import ACTION_NAV_BACK
 import pyxbmct
@@ -21,6 +23,21 @@ def ui_string(id_):
     :rtype: str
     """
     return addon.getLocalizedString(id_).encode('utf-8')
+
+
+@contextmanager
+def busy_spinner():
+    """
+    Show busy spinner for long operations
+
+    This context manager guarantees that a busy spinner will be closed
+    even in the event of an unhandled exception.
+    """
+    executebuiltin('ActivateWindow(10138)')  # Busy spinner on
+    try:
+        yield
+    finally:
+        executebuiltin('Dialog.Close(10138)')  # Busy spinner off
 
 
 class NextEpDialog(pyxbmct.AddonDialogWindow):
