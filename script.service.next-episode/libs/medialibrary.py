@@ -37,16 +37,18 @@ def get_movies():
     Get the list of movies from the Kodi database
 
     :return: the list of movie data as Python dicts like this:
-        ``{u'imdbnumber': u'tt1267297', u'playcount': 0, u'movieid': 2, u'label': u'Hercules'}``
+        ``{"label":"Frankenstein Created Woman","movieid":1,"playcount":1,"uniqueid":{"imdb":"tt0061683","tmdb":"3104"}}``
     :rtype: list
     :raises NoDataError: if the Kodi library has no movies
     """
     params = {
-        'properties': ['imdbnumber', 'playcount'],
+        'properties': ['playcount'],
         'sort': {'order': 'ascending', 'method': 'label'}
     }
     if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
         params['properties'].append('uniqueid')
+    else:
+        params['properties'].append('imdbnumber')
     result = send_json_rpc('VideoLibrary.GetMovies', params)
     if not result.get('movies'):
         raise NoDataError
