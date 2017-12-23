@@ -114,7 +114,7 @@ def log_data_sent(data):
     """
     logged_data = deepcopy(data)
     logged_data['user']['username'] = logged_data['user']['hash'] = '*****'
-    xbmc.log('next-episode: data sent:\n{0}'.format(logged_data), xbmc.LOGNOTICE)
+    xbmc.log('next-episode: data sent:\n{0}'.format(logged_data), xbmc.LOGDEBUG)
 
 
 def sync_library():
