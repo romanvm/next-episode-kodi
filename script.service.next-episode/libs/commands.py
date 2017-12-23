@@ -17,7 +17,7 @@ from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data
                          get_password_hash, LoginError, DataUpdateError)
 from gui import NextEpDialog, ui_string, busy_spinner
 
-addon = Addon('script.service.next-episode')
+addon = Addon('script.service.next-episode')  # Addon ID is needed in a standalone script
 icon = os.path.join(addon.getAddonInfo('path'), 'icon.png')
 dialog = Dialog()
 
@@ -205,10 +205,10 @@ def update_single_item(item):
         data['movies'] = [{
             'watched': '1' if item['playcount'] else '0'
         }]
-        if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
-            data['imdb_id'] = item['uniqueid']['imdb']
-        else:
+        if 'tt' in item['imdbnumber']:
             data['imdb_id'] = item['imdbnumber']
+        else:
+            data['imdb_id'] = item['uniqueid']['imdb']
     log_data_sent(data)
     send_data(data)
 
