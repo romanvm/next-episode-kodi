@@ -226,22 +226,21 @@ def login():
     login_dialog.doModal()
     result = False
     if not login_dialog.is_cancelled:
-        xbmc.executebuiltin('ActivateWindow(10138)')
-        username = login_dialog.username
-        password = login_dialog.password
-        try:
-            hash_ = get_password_hash(username, password)
-        except LoginError:
-            dialog.ok('next-episode.net', ui_string(32007), ui_string(32010))
-            xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
-        else:
-            addon.setSetting('username', username)
-            addon.setSetting('hash', hash_)
-            xbmc.log('next-episode.net: successful login', xbmc.LOGDEBUG)
-            dialog.notification('next-episode.net', ui_string(32011), time=3000,
-                                sound=False)
-            result = True
-        xbmc.executebuiltin('Dialog.Close(10138)')
+        with busy_spinner():
+            username = login_dialog.username
+            password = login_dialog.password
+            try:
+                hash_ = get_password_hash(username, password)
+            except LoginError:
+                dialog.ok('next-episode.net', ui_string(32007), ui_string(32010))
+                xbmc.log('next-episode.net: login failed!', xbmc.LOGERROR)
+            else:
+                addon.setSetting('username', username)
+                addon.setSetting('hash', hash_)
+                xbmc.log('next-episode.net: successful login', xbmc.LOGDEBUG)
+                dialog.notification('next-episode.net', ui_string(32011),
+                                    time=3000, sound=False)
+                result = True
     del login_dialog
     return result
 
