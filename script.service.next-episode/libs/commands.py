@@ -10,8 +10,9 @@ import xbmc
 from xbmcaddon import Addon
 from xbmcgui import Dialog
 import pyxbmct
-from medialibrary import (get_movies, get_tvshows, get_episodes, get_recent_movies,
-                          get_recent_episodes, get_tvdb_id, NoDataError)
+from medialibrary import (get_movies, get_tvshows, get_episodes,
+                          get_recent_movies, get_recent_episodes, get_tvdb_id,
+                          NoDataError)
 from nextepisode import (prepare_movies_list, prepare_episodes_list, update_data,
                          get_password_hash, LoginError, DataUpdateError)
 from gui import NextEpDialog, ui_string, busy_spinner
@@ -58,7 +59,8 @@ class LoginDialog(NextEpDialog):
         self._password_field.controlDown(self._ok_btn)
         self._ok_btn.setNavigation(self._password_field, self._username_field,
                                    self._cancel_btn, self._cancel_btn)
-        self._cancel_btn.setNavigation(self._password_field, self._username_field,
+        self._cancel_btn.setNavigation(self._password_field,
+                                       self._username_field,
                                        self._ok_btn, self._ok_btn)
         self.setFocus(self._username_field)
 
@@ -84,7 +86,8 @@ def send_data(data):
     try:
         update_data(data)
     except LoginError:
-        xbmc.log('next-episode.net: login failed! Re-enter your username and password.',
+        xbmc.log('next-episode.net: login failed! '
+                 'Re-enter your username and password.',
                  xbmc.LOGERROR)
         dialog.notification('next-episode.net', ui_string(32007), icon='error')
     except DataUpdateError as ex:
@@ -95,10 +98,11 @@ def send_data(data):
                       ui_string(32021).format(ex.failed_movies),
                       ui_string(32022).format(ex.failed_shows))
         else:
-            dialog.notification('next-episode.net', ui_string(32008), icon='error')
+            dialog.notification('next-episode.net', ui_string(32008),
+                                icon='error')
     else:
-        dialog.notification('next-episode.net', ui_string(32009), icon=icon, time=2000,
-                            sound=False)
+        dialog.notification('next-episode.net', ui_string(32009),
+                            icon=icon, time=2000, sound=False)
 
 
 def log_data_sent(data):
@@ -135,7 +139,9 @@ def sync_library():
             episodes = []
             for show in tvshows:
                 try:
-                    episodes += prepare_episodes_list(get_episodes(show['tvshowid']))
+                    episodes += prepare_episodes_list(
+                        get_episodes(show['tvshowid'])
+                    )
                 except NoDataError:
                     continue
             data['tvshows'] = episodes
@@ -143,8 +149,10 @@ def sync_library():
             log_data_sent(data)
             send_data(data)
         else:
-            xbmc.log('next-episode: Kodi video library has no movies and TV episodes.',
-                     xbmc.LOGWARNING)
+            xbmc.log(
+                'next-episode: Kodi video library has no movies and TV episodes.',
+                xbmc.LOGWARNING
+            )
 
 
 def sync_new_items():
@@ -168,8 +176,10 @@ def sync_new_items():
         log_data_sent(data)
         send_data(data)
     else:
-        xbmc.log('next-episode.net: Kodi video library has no recent movies and episodes.',
-                 xbmc.LOGWARNING)
+        xbmc.log(
+            'next-episode.net: Kodi video library has no recent movies and episodes.',
+            xbmc.LOGWARNING
+        )
 
 
 def update_single_item(item):
@@ -207,10 +217,12 @@ def login():
     """
     Login to next-episode.net
 
-    :return: ``True`` on successful login, ``False`` if login is failed or cancelled
+    :return: ``True`` on successful login,
+        ``False`` if login is failed or cancelled
     :rtype: bool
     """
-    login_dialog = LoginDialog(ui_string(32001), username=addon.getSetting('username'))
+    login_dialog = LoginDialog(ui_string(32001),
+                               username=addon.getSetting('username'))
     login_dialog.doModal()
     result = False
     if not login_dialog.is_cancelled:
