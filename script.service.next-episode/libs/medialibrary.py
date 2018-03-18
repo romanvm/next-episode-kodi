@@ -107,9 +107,17 @@ def get_tvdb_id(tvshowid):
     :rtype: str
     """
     params = {'tvshowid': tvshowid, 'properties': ['imdbnumber']}
-    return send_json_rpc(
-        'VideoLibrary.GetTVShowDetails', params
-    )['tvshowdetails']['imdbnumber']
+    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+        params['properties'].append('uniqueid')
+    result = send_json_rpc('VideoLibrary.GetTVShowDetails',
+                           params)['tvshowdetails']
+    if result.get('imdbnumber'):
+        tvdbid = result['imdbnumber']
+    elif 'uniqueid' in result and result['uniqueid'].get('tvdb'):
+        tvdbid = result['uniqueid']['tvdb']
+    else:
+        raise NoDataError('Missing TVDB ID: {}'.format(result))
+    return tvdbid
 
 
 def get_recent_movies():
@@ -159,9 +167,9 @@ def get_item_details(id_, type):
     if type == 'movie':
         method = 'VideoLibrary.GetMovieDetails'
         params['properties'].append('imdbnumber')
-        if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
-            params['properties'].append('uniqueid')
     else:
         method = 'VideoLibrary.GetEpisodeDetails'
         params['properties'] += ['tvshowid', 'season', 'episode']
+    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+        params['properties'].append('uniqueid')
     return send_json_rpc(method, params)[type + 'details']
