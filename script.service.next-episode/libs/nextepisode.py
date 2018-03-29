@@ -5,8 +5,9 @@
 
 import json
 from copy import deepcopy
+from pprint import pformat
 from requests import post
-import xbmc
+import logger
 from medialibrary import get_tvdb_id
 
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
@@ -73,7 +74,7 @@ def web_client(url, data=None):
     logged_data = deepcopy(result)
     if 'hash' in logged_data:
         logged_data['hash'] = '*****'
-    xbmc.log('next-episode reply:\n{0}'.format(logged_data), xbmc.LOGDEBUG)
+    logger.log_debug('next-episode reply:\n{0}'.format(pformat(logged_data)))
     return result
 
 

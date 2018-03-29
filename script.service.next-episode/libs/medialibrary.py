@@ -4,7 +4,9 @@
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 import json
+from pprint import pformat
 import xbmc
+import logger
 
 
 class NoDataError(Exception):
@@ -25,13 +27,10 @@ def send_json_rpc(method, params=None):
     request = {'jsonrpc': '2.0', 'method': method, 'id': '1'}
     if params is not None:
         request['params'] = params
-    json_request = json.dumps(request)
-    xbmc.log('next-episode-net: JSON-RPC request: {0}'.format(json_request),
-             xbmc.LOGDEBUG)
-    json_reply = xbmc.executeJSONRPC(json_request)
-    xbmc.log('next-episode-net: JSON-RPC reply: {0}'.format(json_reply),
-             xbmc.LOGDEBUG)
-    return json.loads(json_reply)['result']
+    logger.log_debug('JSON-RPC request:\n{0}'.format(pformat(request)))
+    json_reply = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+    logger.log_debug('JSON-RPC reply:\n{0}'.format(pformat(json_reply)))
+    return json_reply['result']
 
 
 def get_movies():
