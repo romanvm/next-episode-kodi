@@ -154,15 +154,15 @@ def prepare_episodes_list(raw_episodes):
     listing = []
     thetvdb_id_map = {}
     for episode in raw_episodes:
-        season_n = str(episode['season'])
-        episode_n = str(episode['episode'])
+        season_num = str(episode['season'])
+        episode_num = str(episode['episode'])
         watched = '1' if episode['playcount'] else '0'
         if episode['tvshowid'] not in thetvdb_id_map:
             thetvdb_id_map[episode['tvshowid']] = get_tvdb_id(episode['tvshowid'])
         listing.append(
             {'thetvdb_id': thetvdb_id_map[episode['tvshowid']],
-             'season': season_n,
-             'episode': episode_n,
+             'season': season_num,
+             'episode': episode_num,
              'watched': watched}
         )
     return listing

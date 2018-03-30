@@ -8,6 +8,11 @@ from pprint import pformat
 import xbmc
 import logger
 
+# Starting from v.17.0 (Krypton), Kodi JSON-RPC API returns item's unique IDs
+# (IMDB ID, TheTVDB ID etc.) in "uniqueid" property. Old "imdbnumber" property
+# may contain incorrect data or be empty.
+has_uniqueid = xbmc.getInfoLabel('System.BuildVersion') >= '17.0'
+
 
 class NoDataError(Exception):
     pass
@@ -47,7 +52,7 @@ def get_movies():
         'properties': ['playcount', 'imdbnumber'],
         'sort': {'order': 'ascending', 'method': 'label'}
     }
-    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+    if has_uniqueid:
         params['properties'].append('uniqueid')
     result = send_json_rpc('VideoLibrary.GetMovies', params)
     if not result.get('movies'):
@@ -106,7 +111,7 @@ def get_tvdb_id(tvshowid):
     :rtype: str
     """
     params = {'tvshowid': tvshowid, 'properties': ['imdbnumber']}
-    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+    if has_uniqueid:
         params['properties'].append('uniqueid')
     result = send_json_rpc('VideoLibrary.GetTVShowDetails',
                            params)['tvshowdetails']
@@ -115,7 +120,7 @@ def get_tvdb_id(tvshowid):
     elif 'uniqueid' in result and result['uniqueid'].get('tvdb'):
         tvdbid = result['uniqueid']['tvdb']
     else:
-        raise NoDataError('Missing TVDB ID: {}'.format(result))
+        raise NoDataError('Missing TVDB ID: {0}'.format(result))
     return tvdbid
 
 
@@ -128,7 +133,7 @@ def get_recent_movies():
     :raises NoDataError: if the Kodi library has no recent movies.
     """
     params = {'properties': ['imdbnumber', 'playcount']}
-    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+    if has_uniqueid:
         params['properties'].append('uniqueid')
     result = send_json_rpc('VideoLibrary.GetRecentlyAddedMovies', params)
     if not result.get('movies'):
@@ -169,6 +174,6 @@ def get_item_details(id_, type):
     else:
         method = 'VideoLibrary.GetEpisodeDetails'
         params['properties'] += ['tvshowid', 'season', 'episode']
-    if xbmc.getInfoLabel('System.BuildVersion') >= '17.0':
+    if has_uniqueid:
         params['properties'].append('uniqueid')
     return send_json_rpc(method, params)[type + 'details']
