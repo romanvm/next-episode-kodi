@@ -27,5 +27,9 @@
     <website>http://next-episode.net</website>
     <email>roman1972@gmail.com</email>
     <source>https://github.com/santah/next-episode-kodi</source>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
+    <news>1.2.0: Compatibility with Python 3.</news>
   </extension>
 </addon>
