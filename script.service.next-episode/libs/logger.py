@@ -7,13 +7,11 @@ from __future__ import absolute_import, unicode_literals
 import os
 from inspect import currentframe
 from kodi_six import xbmc
-from .utils import addon
+from .addon import addon, addon_id, addon_version
 
 __all__ = ['log_debug', 'log_error', 'log_notice', 'log_warning']
 
 FORMAT = '{id} [v.{version}] - {filename}:{lineno} - {message}'
-addon_id = addon.getAddonInfo('id')
-addon_version = addon.getAddonInfo('version')
 
 
 def log_message(msg, level=xbmc.LOGDEBUG):

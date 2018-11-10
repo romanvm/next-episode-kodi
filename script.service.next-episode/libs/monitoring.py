@@ -8,8 +8,8 @@ import json
 from kodi_six import xbmc
 from kodi_six.xbmcgui import Dialog
 from . import logger
-from .utils import (sync_library, sync_new_items, login, addon,
-                    update_single_item)
+from .addon import addon
+from .utils import sync_library, sync_new_items, login, update_single_item
 from .medialibrary import get_item_details
 from .gui import ui_string
 # Here ``addon`` is imported from another module to prevent a bug

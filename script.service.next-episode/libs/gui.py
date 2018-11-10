@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from kodi_six.xbmc import executebuiltin
 from xbmcgui import ACTION_NAV_BACK
 import pyxbmct
-from .utils import addon
+from .addon import addon
 
 
 def ui_string(id_):

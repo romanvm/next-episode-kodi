@@ -5,13 +5,12 @@
 
 from __future__ import absolute_import, unicode_literals
 from future.builtins import str
-import os
 from copy import deepcopy
 from pprint import pformat
-from kodi_six.xbmcaddon import Addon
 from kodi_six.xbmcgui import Dialog
 import pyxbmct
 from . import logger
+from .addon import addon, icon
 from .medialibrary import (get_movies, get_tvshows, get_episodes,
                            get_recent_movies, get_recent_episodes, get_tvdb_id,
                            NoDataError)
@@ -19,8 +18,6 @@ from .nextepisode import (prepare_movies_list, prepare_episodes_list, update_dat
                           get_password_hash, LoginError, DataUpdateError)
 from .gui import NextEpDialog, ui_string, busy_spinner
 
-addon = Addon('script.service.next-episode')  # Addon ID is needed in a standalone script
-icon = os.path.join(addon.getAddonInfo('path'), 'icon.png')
 dialog = Dialog()
 
 
