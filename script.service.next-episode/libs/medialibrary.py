@@ -3,10 +3,11 @@
 # Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
+from __future__ import absolute_import, unicode_literals
 import json
 from pprint import pformat
-import xbmc
-import logger
+from kodi_six import xbmc
+from . import logger
 
 # Starting from v.17.0 (Krypton), Kodi JSON-RPC API returns item's unique IDs
 # (IMDB ID, TheTVDB ID etc.) in "uniqueid" property. Old "imdbnumber" property
