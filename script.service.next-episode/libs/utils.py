@@ -240,10 +240,3 @@ def login():
                 result = True
     del login_dialog
     return result
-
-
-if __name__ == '__main__':
-    if sys.argv[1] == 'sync_library':
-        sync_library()
-    elif sys.argv[1] == 'login':
-        login()
