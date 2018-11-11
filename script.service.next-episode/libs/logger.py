@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 from inspect import currentframe
 from kodi_six import xbmc
-from .addon import addon, addon_id, addon_version
+from .addon import addon_id, addon_version
 
 __all__ = ['log_debug', 'log_error', 'log_notice', 'log_warning']
 
