@@ -12,6 +12,8 @@ from requests import post
 from . import logger
 from .medialibrary import get_tvdb_id
 
+__all__ = ['prepare_movies_list', 'prepare_episodes_list', 'update_data']
+
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
 

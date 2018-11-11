@@ -18,6 +18,9 @@ from .nextepisode import (prepare_movies_list, prepare_episodes_list, update_dat
                           get_password_hash, LoginError, DataUpdateError)
 from .gui import NextEpDialog, ui_string, busy_spinner
 
+__all__ = ['LoginDialog', 'sync_library', 'sync_new_items', 'login',
+           'update_single_item']
+
 dialog = Dialog()
 
 

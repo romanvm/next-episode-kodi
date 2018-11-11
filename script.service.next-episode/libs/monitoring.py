@@ -15,6 +15,8 @@ from .gui import ui_string
 # Here ``addon`` is imported from another module to prevent a bug
 # when username and hash are not stored in the addon settings.
 
+__all__ = ['UpdateMonitor', 'initial_prompt']
+
 dialog = Dialog()
 
 

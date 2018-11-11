@@ -12,6 +12,8 @@ from xbmcgui import ACTION_NAV_BACK
 import pyxbmct
 from .addon import addon
 
+__all__ = ['NextEpDialog', 'ui_string', 'busy_spinner']
+
 
 def ui_string(id_):
     """
