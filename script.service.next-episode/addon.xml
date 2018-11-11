@@ -30,6 +30,6 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
-    <news>1.2.0: Compatibility with Python 3.</news>
+    <news>1.2.0: Added compatibility with Python 3 for the future Kodi 19 "M..." version.</news>
   </extension>
 </addon>
