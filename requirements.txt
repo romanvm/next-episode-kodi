@@ -1,0 +1,4 @@
+requests
+future
+git+https://github.com/romanvm/script.module.pyxbmct.git
+git+https://github.com/romanvm/kodi.six.git
