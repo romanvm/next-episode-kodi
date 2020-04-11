@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Publish addon
 
 on:
@@ -19,12 +16,18 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install dependencies
+    - name: Install addon checker
       run: |
-        echo Install dependencies
+        pip install -q kodi-addon-checker
     - name: Check with addon-checker
       run: |
-        echo Check with addon-checker
-    - name: Submit addon to the Kodi addon repository
+        - kodi-addon-checker --branch krypton
+    - name: Install addon submitter
       run: |
-        echo Submit addon to the Kodi addon repository
+        pip install -q git+https://github.com/romanvm/kodi-addon-submitter.git
+    - name: Submit addon
+      env:
+        GH_USERNAME: romanvm
+        EMAIL: roman1972@gmail.com
+      run: |
+        submit-addon -r repo-scripts -b krypton -m -s --pull-request script.service.next-episode
