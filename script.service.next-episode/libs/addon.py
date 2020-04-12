@@ -6,9 +6,9 @@ from __future__ import unicode_literals
 import os
 from kodi_six.xbmcaddon import Addon
 
-__all__ = ['addon', 'addon_id', 'addon_version', 'icon']
+__all__ = ['ADDON', 'ADDON_ID', 'ADDON_VERSION', 'ICON']
 
-addon = Addon()
-addon_id = addon.getAddonInfo('id')
-addon_version = addon.getAddonInfo('version')
-icon = os.path.join(addon.getAddonInfo('path'), 'icon.png')
+ADDON = Addon()
+ADDON_ID = ADDON.getAddonInfo('id')
+ADDON_VERSION = ADDON.getAddonInfo('version')
+ICON = os.path.join(ADDON.getAddonInfo('path'), 'icon.png')

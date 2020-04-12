@@ -13,7 +13,7 @@ from future.builtins import str
 from kodi_six.xbmcgui import Dialog
 
 from . import logger
-from .addon import addon, icon
+from .addon import ADDON, ICON
 from .gui import NextEpDialog, ui_string, busy_spinner
 from .medialibrary import (get_movies, get_tvshows, get_episodes,
                            get_recent_movies, get_recent_episodes, get_tvdb_id,
@@ -24,7 +24,7 @@ from .nextepisode import (prepare_movies_list, prepare_episodes_list, update_dat
 __all__ = ['LoginDialog', 'sync_library', 'sync_new_items', 'login',
            'update_single_item']
 
-dialog = Dialog()
+DIALOG = Dialog()
 
 
 class LoginDialog(NextEpDialog):
@@ -92,20 +92,20 @@ def send_data(data):
         update_data(data)
     except LoginError:
         logger.log_error('Login failed! Re-enter your username and password.')
-        dialog.notification('next-episode.net', ui_string(32007), icon='error')
+        DIALOG.notification('next-episode.net', ui_string(32007), icon='error')
     except DataUpdateError as ex:
         logger.log_error(str(ex))
-        if addon.getSetting('disable_error_dialogs') != 'true':
-            dialog.ok('next-epsisode.net',
+        if ADDON.getSetting('disable_error_dialogs') != 'true':
+            DIALOG.ok('next-epsisode.net',
                       ui_string(32020),
                       ui_string(32021).format(ex.failed_movies),
                       ui_string(32022).format(ex.failed_shows))
         else:
-            dialog.notification('next-episode.net', ui_string(32008),
+            DIALOG.notification('next-episode.net', ui_string(32008),
                                 icon='error')
     else:
-        dialog.notification('next-episode.net', ui_string(32009),
-                            icon=icon, time=2000, sound=False)
+        DIALOG.notification('next-episode.net', ui_string(32009),
+                            icon=ICON, time=2000, sound=False)
 
 
 def log_data_sent(data):
@@ -127,8 +127,8 @@ def sync_library():
     with busy_spinner():
         data = {
             'user': {
-                'username': addon.getSetting('username'),
-                'hash': addon.getSetting('hash')
+                'username': ADDON.getSetting('username'),
+                'hash': ADDON.getSetting('hash')
             }
         }
         try:
@@ -164,8 +164,8 @@ def sync_new_items():
     """
     data = {
         'user': {
-            'username': addon.getSetting('username'),
-            'hash': addon.getSetting('hash')
+            'username': ADDON.getSetting('username'),
+            'hash': ADDON.getSetting('hash')
         }}
     try:
         data['movies'] = prepare_movies_list(get_recent_movies())
@@ -193,8 +193,8 @@ def update_single_item(item):
     """
     data = {
         'user': {
-            'username': addon.getSetting('username'),
-            'hash': addon.getSetting('hash')
+            'username': ADDON.getSetting('username'),
+            'hash': ADDON.getSetting('hash')
         }}
     if item['type'] == 'episode':
         data['tvshows'] = [{
@@ -224,7 +224,7 @@ def login():
     :rtype: bool
     """
     login_dialog = LoginDialog(ui_string(32001),
-                               username=addon.getSetting('username'))
+                               username=ADDON.getSetting('username'))
     login_dialog.doModal()
     result = False
     if not login_dialog.is_cancelled:
@@ -234,13 +234,13 @@ def login():
             try:
                 hash_ = get_password_hash(username, password)
             except LoginError:
-                dialog.ok('next-episode.net', ui_string(32007), ui_string(32010))
+                DIALOG.ok('next-episode.net', ui_string(32007), ui_string(32010))
                 logger.log_error('Login failed!')
             else:
-                addon.setSetting('username', username)
-                addon.setSetting('hash', hash_)
+                ADDON.setSetting('username', username)
+                ADDON.setSetting('hash', hash_)
                 logger.log_debug('Successful login')
-                dialog.notification('next-episode.net', ui_string(32011),
+                DIALOG.notification('next-episode.net', ui_string(32011),
                                     time=3000, sound=False)
                 result = True
     del login_dialog
