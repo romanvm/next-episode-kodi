@@ -54,11 +54,15 @@ def initial_prompt():
     if (ADDON.getSetting('prompt_shown') != 'true' and
             not ADDON.getSetting('username') and
             DIALOG.yesno(ui_string(32012),
-                         ui_string(32013),
-                         ui_string(32014),
-                         ui_string(32015))):
+                         '[CR]'.join((
+                             ui_string(32013),
+                             ui_string(32014),
+                             ui_string(32015))
+                         ))):
         if login() and DIALOG.yesno(ui_string(32016),
-                                    ui_string(32017),
-                                    ui_string(32018)):
+                                    '[CR]'.join((
+                                        ui_string(32017),
+                                        ui_string(32018)
+                                    ))):
             sync_library()
         ADDON.setSetting('prompt_shown', 'true')

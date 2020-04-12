@@ -97,9 +97,11 @@ def send_data(data):
         logger.log_error(str(ex))
         if ADDON.getSetting('disable_error_dialogs') != 'true':
             DIALOG.ok('next-epsisode.net',
-                      ui_string(32020),
-                      ui_string(32021).format(ex.failed_movies),
-                      ui_string(32022).format(ex.failed_shows))
+                      '[CR]'.join((
+                          ui_string(32020),
+                          ui_string(32021).format(ex.failed_movies),
+                          ui_string(32022).format(ex.failed_shows)
+                      )))
         else:
             DIALOG.notification('next-episode.net', ui_string(32008),
                                 icon='error')
@@ -234,7 +236,11 @@ def login():
             try:
                 hash_ = get_password_hash(username, password)
             except LoginError:
-                DIALOG.ok('next-episode.net', ui_string(32007), ui_string(32010))
+                DIALOG.ok('next-episode.net',
+                          '[CR]'.join((
+                              ui_string(32007),
+                              ui_string(32010)
+                          )))
                 logger.log_error('Login failed!')
             else:
                 ADDON.setSetting('username', username)
