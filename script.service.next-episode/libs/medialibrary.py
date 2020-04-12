@@ -160,19 +160,19 @@ def get_recent_episodes():
     return result['episodes']
 
 
-def get_item_details(id_, type):
+def get_item_details(id_, type_):
     """
     Get video item details
 
     :param id_: movie or episode Kodi database ID
     :type id_: int
-    :param type: items's type -- 'movie' or 'episode'
-    :type type: str
+    :param type_: items's type -- 'movie' or 'episode'
+    :type type_: str
     :return: item details
     :rtype: dict
     """
-    params = {type + 'id': id_, 'properties': ['playcount']}
-    if type == 'movie':
+    params = {type_ + 'id': id_, 'properties': ['playcount']}
+    if type_ == 'movie':
         method = 'VideoLibrary.GetMovieDetails'
         params['properties'].append('imdbnumber')
     else:
@@ -180,4 +180,4 @@ def get_item_details(id_, type):
         params['properties'] += ['tvshowid', 'season', 'episode']
     if has_uniqueid:
         params['properties'].append('uniqueid')
-    return send_json_rpc(method, params)[type + 'details']
+    return send_json_rpc(method, params)[type_ + 'details']

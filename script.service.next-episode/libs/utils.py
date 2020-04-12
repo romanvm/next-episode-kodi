@@ -4,19 +4,22 @@
 # License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 from __future__ import absolute_import, unicode_literals
-from future.builtins import str
+
 from copy import deepcopy
 from pprint import pformat
-from kodi_six.xbmcgui import Dialog
+
 import pyxbmct
+from future.builtins import str
+from kodi_six.xbmcgui import Dialog
+
 from . import logger
 from .addon import addon, icon
+from .gui import NextEpDialog, ui_string, busy_spinner
 from .medialibrary import (get_movies, get_tvshows, get_episodes,
                            get_recent_movies, get_recent_episodes, get_tvdb_id,
                            NoDataError)
 from .nextepisode import (prepare_movies_list, prepare_episodes_list, update_data,
                           get_password_hash, LoginError, DataUpdateError)
-from .gui import NextEpDialog, ui_string, busy_spinner
 
 __all__ = ['LoginDialog', 'sync_library', 'sync_new_items', 'login',
            'update_single_item']
@@ -123,10 +126,11 @@ def sync_library():
     """
     with busy_spinner():
         data = {
-        'user': {
-            'username': addon.getSetting('username'),
-            'hash': addon.getSetting('hash')
-        }}
+            'user': {
+                'username': addon.getSetting('username'),
+                'hash': addon.getSetting('hash')
+            }
+        }
         try:
             data['movies'] = prepare_movies_list(get_movies())
         except NoDataError:

@@ -17,6 +17,12 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Install Pylint
+      run: |
+        pip install -q pylint
+    - name: Run Pylint
+      run: |
+         pylint script.service.next-episode/libs
     - name: Install addon checker
       run: |
         pip install -q kodi-addon-checker
