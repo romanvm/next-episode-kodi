@@ -29,5 +29,6 @@ jobs:
       run: |
         submit-addon -r repo-scripts -b krypton -m -s --pull-request script.service.next-episode
       env:
-        GH_USERNAME: "romanvm"
-        EMAIL: "roman1972@gmail.com"
+        GH_USERNAME: romanvm
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        EMAIL: roman1972@gmail.com
