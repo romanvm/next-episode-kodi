@@ -13,7 +13,7 @@ from future.builtins import str
 from kodi_six.xbmcgui import Dialog
 
 from . import logger
-from .addon import ADDON, ICON
+from .addon import ADDON, ICON, KODI_VERSION
 from .gui import NextEpDialog, ui_string, busy_spinner
 from .medialibrary import (get_movies, get_tvshows, get_episodes,
                            get_recent_movies, get_recent_episodes, get_tvdb_id,
@@ -45,8 +45,15 @@ class LoginDialog(NextEpDialog):
         self.placeControl(password_label, 1, 0)
         self._username_field = pyxbmct.Edit('')
         self.placeControl(self._username_field, 0, 1)
-        self._password_field = pyxbmct.Edit('', isPassword=True)
+        password_field_kwargs = {}
+        if KODI_VERSION < '18':
+            password_field_kwargs['isPassword'] = True
+        self._password_field = pyxbmct.Edit('', **password_field_kwargs)
         self.placeControl(self._password_field, 1, 1)
+        if KODI_VERSION >= '18':
+            from xbmcgui import INPUT_TYPE_TEXT, INPUT_TYPE_PASSWORD
+            self._username_field.setType(INPUT_TYPE_TEXT, ui_string(32003))
+            self._password_field.setType(INPUT_TYPE_PASSWORD, ui_string(32004))
         self._ok_btn = pyxbmct.Button(ui_string(32005))
         self.placeControl(self._ok_btn, 2, 1)
         self._cancel_btn = pyxbmct.Button(ui_string(32006))
