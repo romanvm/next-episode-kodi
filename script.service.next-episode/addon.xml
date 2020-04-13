@@ -29,7 +29,10 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
-    <news>- 1.2.1: Fixed dialogs with multiline texts in Kodi 19 &quot;Matrix&quot;.
-- 1.2.0: Added compatibility with Python 3 for the future Kodi 19 &quot;Matrix&quot; version.</news>
+    <news>1.2.1:
+- Fixed library sync when TMDB is used as a TV shows scraper.
+- Fixed UI dialogs in Kodi 19 &quot;Matrix&quot;.
+1.2.0:
+- Added compatibility with Python 3 for the future Kodi 19 &quot;Matrix&quot; version.</news>
   </extension>
 </addon>
