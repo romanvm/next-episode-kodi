@@ -119,10 +119,10 @@ def get_tvdb_id(tvshowid):
         params['properties'].append('uniqueid')
     result = send_json_rpc('VideoLibrary.GetTVShowDetails',
                            params)['tvshowdetails']
-    if result.get('imdbnumber'):
-        tvdbid = result['imdbnumber']
-    elif 'uniqueid' in result and result['uniqueid'].get('tvdb'):
+    if 'uniqueid' in result and result['uniqueid'].get('tvdb'):
         tvdbid = result['uniqueid']['tvdb']
+    elif result.get('imdbnumber'):
+        tvdbid = result['imdbnumber']
     else:
         raise NoDataError('Missing TVDB ID: {0}'.format(result))
     return tvdbid
