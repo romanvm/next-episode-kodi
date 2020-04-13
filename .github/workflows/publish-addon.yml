@@ -26,8 +26,8 @@ jobs:
       run: |
         pip install -q git+https://github.com/romanvm/kodi-addon-submitter.git
     - name: Submit addon
-      env:
-        GH_USERNAME: romanvm
-        EMAIL: roman1972@gmail.com
       run: |
         submit-addon -r repo-scripts -b krypton -m -s --pull-request script.service.next-episode
+      env:
+        GH_USERNAME: "romanvm"
+        EMAIL: "roman1972@gmail.com"
