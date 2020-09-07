@@ -1,5 +1,8 @@
 # script.service.next-episode
 
+
+![Check addon](https://github.com/santah/next-episode-kodi/workflows/Check%20addon/badge.svg)
+
 The addon for [Kodi](https://kodi.tv/) mediacenter that uploads your video library data to
 [next-episode.net](http://next-episode.net/) website.
 
