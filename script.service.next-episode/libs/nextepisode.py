@@ -143,7 +143,7 @@ def prepare_movies_list(raw_movies):
         imdb_id = None
         if 'tt' in movie['imdbnumber']:
             imdb_id = movie['imdbnumber']
-        elif 'uniqueid' in movie and movie['iniqueid'].get('imdb'):
+        elif 'uniqueid' in movie and movie['uniqueid'].get('imdb'):
             imdb_id = movie['uniqueid']['imdb']
         if imdb_id is not None:
             watched = '1' if movie['playcount'] else '0'

@@ -218,7 +218,7 @@ def update_single_item(item):
         imdb_id = None
         if 'tt' in item['imdbnumber']:
             imdb_id = item['imdbnumber']
-        elif 'uniqueid' in item and item['iniqueid'].get('imdb'):
+        elif 'uniqueid' in item and item['uniqueid'].get('imdb'):
             imdb_id = item['uniqueid']['imdb']
         if imdb_id is not None:
             data['movies'] = [{
