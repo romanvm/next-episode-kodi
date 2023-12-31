@@ -23,6 +23,6 @@ initialize_logging()
 with catch_exception(logging.error):
     initial_prompt()
     update_monitor = UpdateMonitor()
-    logging.info('Service started')
+    logging.debug('Service started')
     update_monitor.waitForAbort()
-    logging.info('Service stopped')
+    logging.debug('Service stopped')
