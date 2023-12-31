@@ -5,6 +5,7 @@
    provider-name="next-episode.net">
   <requires>
     <import addon="xbmc.python" version="3.0.0" />
+    <import addon="script.module.pyxbmct" />
   </requires>
   <extension point="xbmc.service" library="service.py" />
   <extension point="xbmc.python.script" library="main.py">
