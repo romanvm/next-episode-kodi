@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="script.service.next-episode"
    name="Next Episode (next-episode.net)"
-   version="1.2.3"
+   version="1.2.6"
    provider-name="next-episode.net">
   <requires>
-    <import addon="xbmc.python" version="2.25.0" />
-    <import addon="script.module.pyxbmct" />
-    <import addon="script.module.requests" />
-    <import addon="script.module.future" />
-    <import addon="script.module.kodi-six" />
+    <import addon="xbmc.python" version="3.0.0" />
   </requires>
   <extension point="xbmc.service" library="service.py" />
   <extension point="xbmc.python.script" library="main.py">
@@ -29,7 +25,10 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
-    <news>1.2.3:
-- Fix broken service.</news>
+    <news>1.2.6:
+- Removed Python 2 compatibility
+
+1.2.5:
+- Fixed crashes when movies do not have IMDB ID.</news>
   </extension>
 </addon>

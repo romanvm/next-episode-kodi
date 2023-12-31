@@ -1,21 +1,25 @@
-# coding: utf-8
-# Created on: 15.03.2016
-# Author: Roman Miroshnychenko aka Roman V.M. (romanvm@yandex.ua)
-# License: GPL v. 3 <http://www.gnu.org/licenses/gpl-3.0.en.html>
-
-from __future__ import absolute_import, unicode_literals
+# (c) Roman Miroshnychenko, 2023
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
+import logging
 from copy import deepcopy
 from pprint import pformat
 
-from future.utils import python_2_unicode_compatible
-from requests import post
-
-from . import logger
-from .medialibrary import get_tvdb_id
-
-__all__ = ['prepare_movies_list', 'prepare_episodes_list', 'update_data']
+from libs import simple_requests as requests
+from libs.medialibrary import get_tvdb_id
 
 UPDATE_DATA = 'https://next-episode.net/api/kodi/v1/update_data'
 LOGIN = 'https://next-episode.net/api/kodi/v1/login'
@@ -25,7 +29,6 @@ class LoginError(Exception):
     pass
 
 
-@python_2_unicode_compatible
 class DataUpdateError(Exception):
     """
     Exception that carries information about movies and/or TV shows
@@ -59,9 +62,7 @@ class DataUpdateError(Exception):
     def __str__(self):
         return (
             'Data update error! '
-            'Failed movies: {0}. Failed TV shows: {1}'.format(
-                self.failed_movies,
-                self.failed_shows)
+            f'Failed movies: {self.failed_movies}. Failed TV shows: {self.failed_shows}'
         )
 
 
@@ -76,12 +77,12 @@ def web_client(url, data=None):
     :return. website JSON response
     :rtype: dict
     """
-    reply = post(url, json=data, verify=False)
+    reply = requests.post(url, json=data, verify=False)
     result = json.loads(reply.text)
     logged_data = deepcopy(result)
     if 'hash' in logged_data:
         logged_data['hash'] = '*****'
-    logger.log_debug('next-episode reply:\n{0}'.format(pformat(logged_data)))
+    logging.debug('next-episode reply:\n%s', pformat(logged_data))
     return result
 
 
@@ -140,12 +141,14 @@ def prepare_movies_list(raw_movies):
     """
     listing = []
     for movie in raw_movies:
+        imdb_id = None
         if 'tt' in movie['imdbnumber']:
             imdb_id = movie['imdbnumber']
-        else:
+        elif 'uniqueid' in movie and movie['uniqueid'].get('imdb'):
             imdb_id = movie['uniqueid']['imdb']
-        watched = '1' if movie['playcount'] else '0'
-        listing.append({'imdb_id': imdb_id, 'watched': watched})
+        if imdb_id is not None:
+            watched = '1' if movie['playcount'] else '0'
+            listing.append({'imdb_id': imdb_id, 'watched': watched})
     return listing
 
 
@@ -161,15 +164,19 @@ def prepare_episodes_list(raw_episodes):
     listing = []
     thetvdb_id_map = {}
     for episode in raw_episodes:
-        season_num = str(episode['season'])
-        episode_num = str(episode['episode'])
-        watched = '1' if episode['playcount'] else '0'
         if episode['tvshowid'] not in thetvdb_id_map:
-            thetvdb_id_map[episode['tvshowid']] = get_tvdb_id(episode['tvshowid'])
-        listing.append(
-            {'thetvdb_id': thetvdb_id_map[episode['tvshowid']],
-             'season': season_num,
-             'episode': episode_num,
-             'watched': watched}
-        )
+            tvdb_id = get_tvdb_id(episode['tvshowid'])
+            thetvdb_id_map[episode['tvshowid']] = tvdb_id
+        else:
+            tvdb_id = thetvdb_id_map[episode['tvshowid']]
+        if tvdb_id is not None:
+            season_num = str(episode['season'])
+            episode_num = str(episode['episode'])
+            watched = '1' if episode['playcount'] else '0'
+            listing.append(
+                {'thetvdb_id': tvdb_id,
+                 'season': season_num,
+                 'episode': episode_num,
+                 'watched': watched}
+            )
     return listing
