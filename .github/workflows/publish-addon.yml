@@ -29,6 +29,6 @@ jobs:
       run: |
         submit-addon -r repo-scripts -b matrix -s --pull-request script.service.next-episode
       env:
-        GH_USERNAME: santah
+        GH_USERNAME: romanvm
         GH_TOKEN: ${{ secrets.gh_token }}
         EMAIL: roman1972@gmail.com
